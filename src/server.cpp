@@ -40,7 +40,6 @@ void Server::setPacketsFilter() {
 
 	char filter[MAX_FILTER_SIZE] = {0};
 	snprintf(filter, MAX_FILTER_SIZE - 1, "udp dst port %u and udp src port %u", bootpServerPort, bootpClientPort);
-	printf("%s\n", filter);
 	if(pcap_compile(pcapHandle, &fp, filter, 0, serverIpMask) != 0) {
 		throw pcapErrbuf;
 	}
