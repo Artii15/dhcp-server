@@ -1,41 +1,47 @@
 #include "../inc/server.h"
+#include "../inc/dhcp_message.h"
 
-#include <string.h>
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <netdb.h>
-#include <stdio.h>
 
+#define MAX_FILTER_SIZE 64
 
-Server::Server() {
-	configureSocket();
-}
-
-void Server::configureSocket() {
-	struct sockaddr_in serverAddr;
-	configureAddress(&serverAddr);
-
-	sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	int nFoo = 1;
-	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char*)&nFoo, sizeof(nFoo));
-	bind(sock, (struct sockaddr*)&serverAddr, sizeof(struct sockaddr));
-}
-
-void Server::configureAddress(struct sockaddr_in* addr) {
-	memset(addr, 0, sizeof(struct sockaddr));
-	addr->sin_family = AF_INET;
-	addr->sin_addr.s_addr = INADDR_ANY;
-
-	struct servent* dhcpService = getservbyname("BOOTPS", "UDP");
-	if(dhcpService == NULL) {
-		throw "Could not find port for BOOTPS service on UDP protocol";
+Server::Server(char* interfaceName) {
+	pcapHandle = pcap_create(interfaceName, pcapErrbuf);
+	if(pcapHandle == NULL) {
+		throw pcapErrbuf;
 	}
-	addr->sin_port = dhcpService->s_port;
+	pcap_set_snaplen(pcapHandle, 65535);
+	if(pcap_activate(pcapHandle) != 0) {
+		throw pcapErrbuf;
+	}
+
+	if(pcap_lookupnet(interfaceName, &serverIpAddr, &serverIpMask, pcapErrbuf) != 0) {
+		throw pcapErrbuf;
+	}
+
+	setPacketsFilter();
+}
+
+void Server::setPacketsFilter() {
+	struct bpf_program fp;
+
+	struct servent* bootpServerService = getservbyname("BOOTPS", "UDP");
+	struct servent* bootpClientService = getservbyname("BOOTPC", "UDP");
+
+	char filter[MAX_FILTER_SIZE] = {0};
+	snprintf(filter, MAX_FILTER_SIZE - 1, "udp dst port %u and udp src port %u", ntohl(bootpServerService->s_port), ntohl(bootpClientService->s_port));
+	if(pcap_compile(pcapHandle, &fp, filter, 0, serverIpMask) != 0) {
+		throw pcapErrbuf;
+	}
+	if(pcap_setfilter(pcapHandle, &fp) < 0) {
+		throw pcapErrbuf;
+	}
 }
 
 Server::~Server() {
-	close(sock);
+	pcap_close(pcapHandle); 
+}
+
+void Server::listen() {
+	pcap_loop(pcapHandle, -1, trap, NULL);
 }
