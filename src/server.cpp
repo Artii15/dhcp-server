@@ -43,5 +43,9 @@ Server::~Server() {
 }
 
 void Server::listen() {
-	pcap_loop(pcapHandle, -1, trap, NULL);
+	pcap_loop(pcapHandle, 0, &Server::dispatch, (u_char*)this);
+}
+
+void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *rawMessage) {
+
 }

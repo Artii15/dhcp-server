@@ -5,9 +5,10 @@
 
 class Server {
 	private:
+		static void dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *bytes);
+
 		char pcapErrbuf[PCAP_ERRBUF_SIZE];
 		pcap_t* pcapHandle;
-
 		bpf_u_int32 serverIpAddr, serverIpMask;
 
 		void setPacketsFilter();
