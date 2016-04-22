@@ -27,14 +27,20 @@ void Server::setPacketsFilter() {
 	struct bpf_program fp;
 
 	struct servent* bootpServerService = getservbyname("bootps", "udp");
-	struct servent* bootpClientService = getservbyname("bootpc", "udp");
-
-	if(bootpServerService == 0 || bootpClientService == 0) {
-		throw "Could determine bootp service port for udp";
+	if(bootpServerService == NULL) {
+		throw "Could determine bootps service port for udp";
 	}
+	uint16_t bootpServerPort = ntohs(bootpServerService->s_port);
+
+	struct servent* bootpClientService = getservbyname("bootpc", "udp");
+	if(bootpClientService == NULL) {
+		throw "Could determine bootpc service port for udp";
+	}
+	uint16_t bootpClientPort = ntohs(bootpClientService->s_port);
 
 	char filter[MAX_FILTER_SIZE] = {0};
-	snprintf(filter, MAX_FILTER_SIZE - 1, "udp dst port %u and udp src port %u", ntohs(bootpServerService->s_port), ntohs(bootpClientService->s_port));
+	snprintf(filter, MAX_FILTER_SIZE - 1, "udp dst port %u and udp src port %u", bootpServerPort, bootpClientPort);
+	printf("%s\n", filter);
 	if(pcap_compile(pcapHandle, &fp, filter, 0, serverIpMask) != 0) {
 		throw pcapErrbuf;
 	}
