@@ -2,6 +2,7 @@
 #include "../inc/dhcp_message.h"
 
 #include <netdb.h>
+#include <stdio.h>
 
 #define MAX_FILTER_SIZE 64
 
@@ -25,11 +26,15 @@ Server::Server(char* interfaceName) {
 void Server::setPacketsFilter() {
 	struct bpf_program fp;
 
-	struct servent* bootpServerService = getservbyname("BOOTPS", "UDP");
-	struct servent* bootpClientService = getservbyname("BOOTPC", "UDP");
+	struct servent* bootpServerService = getservbyname("bootps", "udp");
+	struct servent* bootpClientService = getservbyname("bootpc", "udp");
+
+	if(bootpServerService == 0 || bootpClientService == 0) {
+		throw "Could determine bootp service port for udp";
+	}
 
 	char filter[MAX_FILTER_SIZE] = {0};
-	snprintf(filter, MAX_FILTER_SIZE - 1, "udp dst port %u and udp src port %u", ntohl(bootpServerService->s_port), ntohl(bootpClientService->s_port));
+	snprintf(filter, MAX_FILTER_SIZE - 1, "udp dst port %u and udp src port %u", ntohs(bootpServerService->s_port), ntohs(bootpClientService->s_port));
 	if(pcap_compile(pcapHandle, &fp, filter, 0, serverIpMask) != 0) {
 		throw pcapErrbuf;
 	}
@@ -47,5 +52,5 @@ void Server::listen() {
 }
 
 void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *rawMessage) {
-
+	printf("[%dB of %dB]\n", header->caplen, header->len);
 }
