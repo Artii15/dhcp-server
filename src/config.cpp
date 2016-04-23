@@ -24,6 +24,8 @@ void Config::parse(const char* filePath) {
 			}
 		}
 	}
+
+	configFile.close();
 }
 
 const string& Config::get(const string &key) {
