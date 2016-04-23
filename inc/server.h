@@ -21,10 +21,8 @@ class Server {
 		pcap_t* pcapHandle;
 		bpf_u_int32 serverIpAddr, serverIpMask;
 		std::unordered_map<uint32_t, Transaction> transactions;
-		uint32_t identifier;
 
 		void setPacketsFilter();
-		void setServerIdetifier(const char*);
 
 		void handleDiscover(struct DHCPMessage* dhcpMsg, Options* options);
 		void sendOffer(DHCPMessage* dhcpMsg, Transaction &transaction);
