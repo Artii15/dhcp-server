@@ -104,6 +104,19 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	offer.flags = dhcpMsg->flags;
 	offer.giaddr = dhcpMsg->giaddr;
 	memcpy(offer.chaddr, dhcpMsg->chaddr, MAX_HADDR_SIZE);
+	offer.magicCookie = dhcpMsg->magicCookie;
+
+	uint8_t* optionsPtr = packIpAddressLeaseTime(offer.options, transaction.leaseTime);
+}
+
+uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
+	*(dst++) = IP_ADDRESS_LEASE_TIME_OPTION;
+	*(dst++) = sizeof(leaseTime);
+
+	uint32_t normalizedLeaseTime = htonl(leaseTime);
+	memcpy(dst, &normalizedLeaseTime, sizeof(normalizedLeaseTime));
+
+	return dst + sizeof(normalizedLeaseTime);
 }
 
 bool Server::transactionExists(uint32_t id) {

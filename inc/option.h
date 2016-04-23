@@ -7,6 +7,7 @@
 #define DHCPDISCOVER 1
 #define DHCPOFFER 2
 #define DHCPREQUEST 3
+#define IP_ADDRESS_LEASE_TIME_OPTION 51
 #define END_OPTION 255
 
 struct Option {
