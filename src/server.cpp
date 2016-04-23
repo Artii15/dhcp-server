@@ -71,5 +71,6 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 
 	if(dhcpMsg->op == BOOTREQUEST) {
 		Options options(dhcpMsg->options, header->caplen - dhcpMsgStartPos);	
+		printf("%u\n", options.get(53).code);
 	}
 }

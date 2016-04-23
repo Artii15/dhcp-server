@@ -1,4 +1,5 @@
 #include "../inc/options.h"
+#include <stdio.h>
 
 Options::Options(uint8_t* rawOptions, unsigned maxOptionsLength) {
 	read(rawOptions, maxOptionsLength);
@@ -17,4 +18,9 @@ void Options::read(uint8_t* rawOptions, unsigned maxOptionsLength) {
 
 		i += (sizeof(option.code) + sizeof(option.length) + option.length);
 	}
+}
+
+
+Option& Options::get(uint8_t code) {
+	return options[code];
 }

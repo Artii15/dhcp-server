@@ -7,6 +7,7 @@
 class Options {
 	public:
 		Options(uint8_t* rawOptions, unsigned maxOptionsLength);
+		Option& get(uint8_t code);
 
 	private:
 		void read(uint8_t* rawOptions, unsigned maxOptionsLength);
