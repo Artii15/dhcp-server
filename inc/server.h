@@ -21,13 +21,16 @@ class Server {
 		pcap_t* pcapHandle;
 		bpf_u_int32 serverIpAddr, serverIpMask;
 		std::unordered_map<uint32_t, Transaction> transactions;
+		uint32_t identifier;
 
 		void setPacketsFilter();
-		void handleDiscover(struct DHCPMessage* dhcpMsg, Options* options);
+		void setServerIdetifier(const char*);
 
+		void handleDiscover(struct DHCPMessage* dhcpMsg, Options* options);
 		void sendOffer(DHCPMessage* dhcpMsg, Transaction &transaction);
 		uint8_t* packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime);
 		uint8_t* packMessageType(uint8_t* dst, uint8_t messageType);
+		uint8_t* packServerIdentifier(uint8_t* dst);
 
 		bool transactionExists(uint32_t id);
 };

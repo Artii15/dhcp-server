@@ -7,6 +7,9 @@
 #include <linux/ip.h>
 #include <linux/udp.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
 
 #define MAX_FILTER_SIZE 64
 
@@ -28,6 +31,7 @@ Server::Server(Config& config) {
 	}
 
 	setPacketsFilter();
+	setServerIdetifier(interfaceName);
 }
 
 void Server::setPacketsFilter() {
@@ -53,6 +57,19 @@ void Server::setPacketsFilter() {
 	if(pcap_setfilter(pcapHandle, &fp) < 0) {
 		throw pcapErrbuf;
 	}
+}
+
+void Server::setServerIdetifier(const char* serverInterface) {
+	int fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+	struct ifreq ifr;
+	ifr.ifr_addr.sa_family = AF_INET;
+	strncpy(ifr.ifr_name, serverInterface, IFNAMSIZ-1);
+	ioctl(fd, SIOCGIFADDR, &ifr);
+
+	close(fd);
+
+	identifier = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr.s_addr;
 }
 
 Server::~Server() {
@@ -124,6 +141,11 @@ uint8_t* Server::packMessageType(uint8_t* dst, uint8_t messageType) {
 	*(dst++) = DHCP_MESSAGE_TYPE;
 	*(dst++) = sizeof(messageType);
 	*(dst++) = messageType;
+
+	return dst;
+}
+
+uint8_t* Server::packServerIdentifier(uint8_t* dst) {
 
 	return dst;
 }
