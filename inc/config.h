@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 #include <string>
-#include <map>
+#include <unordered_map>
 
 class Config {
 	public:
@@ -11,7 +11,7 @@ class Config {
 	
 	private:
 		void parse(const char* filePath);
-		std::map<std::string, std::string> settings;
+		std::unordered_map<std::string, std::string> settings;
 };
 
 #endif

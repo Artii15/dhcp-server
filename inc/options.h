@@ -1,7 +1,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include <map>
+#include <unordered_map>
 #include "option.h"
 
 class Options {
@@ -12,7 +12,7 @@ class Options {
 	private:
 		void read(uint8_t* rawOptions, unsigned maxOptionsLength);
 
-		std::map<uint8_t, Option> options;
+		std::unordered_map<uint8_t, Option> options;
 };
 
 #endif
