@@ -7,6 +7,7 @@
 #define DHCPDISCOVER 1
 #define DHCPOFFER 2
 #define DHCPREQUEST 3
+#define END_OPTION 255
 
 struct Option {
 	uint8_t code;
