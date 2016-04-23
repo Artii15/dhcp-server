@@ -104,7 +104,7 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 
 void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
 	if(!transactionExists(dhcpMsg->xid)) {
-		Transaction transaction(dhcpMsg->xid, 3232235876, 1000000000);
+		Transaction transaction(dhcpMsg->xid, 3232235876, 4294967040, 1000000000);
 		transactions[dhcpMsg->xid] = transaction;
 	}
 }
@@ -125,6 +125,8 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 
 	uint8_t* optionsPtr = packIpAddressLeaseTime(offer.options, transaction.leaseTime);
 	optionsPtr = packMessageType(optionsPtr, DHCPOFFER);
+	optionsPtr = packServerIdentifier(optionsPtr);
+	optionsPtr = packNetworkMask(optionsPtr, transaction.networkMask);
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
@@ -151,6 +153,14 @@ uint8_t* Server::packServerIdentifier(uint8_t* dst) {
 	memcpy(dst, &identifier, sizeof(identifier));
 
 	return dst + sizeof(identifier);
+}
+
+uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
+	*(dst++) = SUBNET_MASK;
+	*(dst++) = sizeof(mask);
+	memcpy(dst, &mask, sizeof(mask));
+
+	return dst + sizeof(mask);
 }
 
 bool Server::transactionExists(uint32_t id) {

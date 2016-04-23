@@ -31,6 +31,7 @@ class Server {
 		uint8_t* packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime);
 		uint8_t* packMessageType(uint8_t* dst, uint8_t messageType);
 		uint8_t* packServerIdentifier(uint8_t* dst);
+		uint8_t* packNetworkMask(uint8_t* dst, uint32_t mask);
 
 		bool transactionExists(uint32_t id);
 };
