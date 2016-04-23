@@ -107,16 +107,25 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	offer.magicCookie = dhcpMsg->magicCookie;
 
 	uint8_t* optionsPtr = packIpAddressLeaseTime(offer.options, transaction.leaseTime);
+	optionsPtr = packMessageType(optionsPtr, DHCPOFFER);
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
-	*(dst++) = IP_ADDRESS_LEASE_TIME_OPTION;
+	*(dst++) = IP_ADDRESS_LEASE_TIME;
 	*(dst++) = sizeof(leaseTime);
 
 	uint32_t normalizedLeaseTime = htonl(leaseTime);
 	memcpy(dst, &normalizedLeaseTime, sizeof(normalizedLeaseTime));
 
 	return dst + sizeof(normalizedLeaseTime);
+}
+
+uint8_t* Server::packMessageType(uint8_t* dst, uint8_t messageType) {
+	*(dst++) = DHCP_MESSAGE_TYPE;
+	*(dst++) = sizeof(messageType);
+	*(dst++) = messageType;
+
+	return dst;
 }
 
 bool Server::transactionExists(uint32_t id) {

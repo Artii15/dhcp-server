@@ -27,6 +27,7 @@ class Server {
 
 		void sendOffer(DHCPMessage* dhcpMsg, Transaction &transaction);
 		uint8_t* packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime);
+		uint8_t* packMessageType(uint8_t* dst, uint8_t messageType);
 
 		bool transactionExists(uint32_t id);
 };
