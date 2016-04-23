@@ -9,6 +9,7 @@
 #define MAX_OPTIONS_SIZE 312
 
 #define BOOTREQUEST 1
+#define BOOTREPLY 2
 
 struct DHCPMessage {
 	uint8_t op;

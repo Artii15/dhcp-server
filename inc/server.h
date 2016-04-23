@@ -24,6 +24,8 @@ class Server {
 
 		void setPacketsFilter();
 		void handleDiscover(struct DHCPMessage* dhcpMsg, Options* options);
+		void sendOffer(DHCPMessage* dhcpMsg, Transaction &transaction);
+
 		bool transactionExists(uint32_t id);
 };
 

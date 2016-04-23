@@ -6,6 +6,7 @@
 #include <linux/if_ether.h>
 #include <linux/ip.h>
 #include <linux/udp.h>
+#include <string.h>
 
 #define MAX_FILTER_SIZE 64
 
@@ -89,6 +90,20 @@ void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
 		Transaction transaction(dhcpMsg->xid, 3232235876, 1000000000);
 		transactions[dhcpMsg->xid] = transaction;
 	}
+}
+
+void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
+	DHCPMessage offer;		
+	memset(&offer, 0, sizeof(offer));
+
+	offer.op = BOOTREPLY;
+	offer.htype = dhcpMsg->htype;
+	offer.hlen = dhcpMsg->hlen;
+	offer.xid = dhcpMsg->xid;
+	offer.yiaddr = transaction.allocatedIpAddress;
+	offer.flags = dhcpMsg->flags;
+	offer.giaddr = dhcpMsg->giaddr;
+	memcpy(offer.chaddr, dhcpMsg->chaddr, MAX_HADDR_SIZE);
 }
 
 bool Server::transactionExists(uint32_t id) {

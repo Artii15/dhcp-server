@@ -3,3 +3,5 @@ network_mask=255.255.255.0
 
 first_address=192.168.2.2
 last_address=192.168.2.254
+
+server_name=eXperimental
