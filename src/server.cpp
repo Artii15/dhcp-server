@@ -1,6 +1,5 @@
 #include "../inc/server.h"
 #include "../inc/dhcp_message.h"
-#include "../inc/options.h"
 
 #include <netdb.h>
 #include <stdio.h>
@@ -9,6 +8,8 @@
 #include <linux/udp.h>
 
 #define MAX_FILTER_SIZE 64
+
+using namespace std;
 
 Server::Server(Config& config) {
 	const char* interfaceName = config.get("interface").c_str();
@@ -73,7 +74,7 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
 	switch(operationType) {
 		case(DHCPDISCOVER): {
-			printf("%u\n", operationType);
+			((Server*)server)->handleDiscover(dhcpMsg, &options);
 			break;	
 		}
 		case(DHCPREQUEST): {
@@ -81,4 +82,17 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 			break;	
 		}
 	}
+}
+
+void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
+	if(!transactionExists(dhcpMsg->xid)) {
+		Transaction transaction(dhcpMsg->xid, 3232235876);
+		transactions[dhcpMsg->xid] = transaction;
+	}
+}
+
+bool Server::transactionExists(uint32_t id) {
+	unordered_map<uint32_t, Transaction>::iterator transactionsIterator = transactions.find(id);
+
+	return transactionsIterator != transactions.end();
 }

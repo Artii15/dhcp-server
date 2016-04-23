@@ -2,7 +2,10 @@
 #define SERVER_H
 
 #include <pcap/pcap.h>
+#include <unordered_map>
 #include "config.h"
+#include "options.h"
+#include "transaction.h"
 
 class Server {
 	public:
@@ -17,8 +20,11 @@ class Server {
 		char pcapErrbuf[PCAP_ERRBUF_SIZE];
 		pcap_t* pcapHandle;
 		bpf_u_int32 serverIpAddr, serverIpMask;
+		std::unordered_map<uint32_t, Transaction> transactions;
 
 		void setPacketsFilter();
+		void handleDiscover(struct DHCPMessage* dhcpMsg, Options* options);
+		bool transactionExists(uint32_t id);
 };
 
 #endif
