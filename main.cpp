@@ -1,7 +1,9 @@
 #include "inc/server.h"
+#include "inc/config.h"
 
 int main(int argc, char** argv) {
-	Server server((argc > 1) ? argv[1] : NULL);
+	Config config("config");
+	Server server(config);
 
 	server.listen();
 

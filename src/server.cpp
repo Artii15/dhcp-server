@@ -7,7 +7,8 @@
 
 #define MAX_FILTER_SIZE 64
 
-Server::Server(char* interfaceName) {
+Server::Server(Config& config) {
+	const char* interfaceName = config.get("interface").c_str();
 	pcapHandle = pcap_create(interfaceName, pcapErrbuf);
 	if(pcapHandle == NULL) {
 		throw pcapErrbuf;

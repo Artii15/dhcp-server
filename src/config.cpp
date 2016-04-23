@@ -5,11 +5,11 @@
 
 using namespace std;
 
-Config::Config(const string &filePath) {
-		
+Config::Config(const char* filePath) {
+	parse(filePath);
 }
 
-void Config::parse(const string &filePath) {
+void Config::parse(const char* filePath) {
 	ifstream configFile(filePath);
 
 	string line;
@@ -27,5 +27,5 @@ void Config::parse(const string &filePath) {
 }
 
 const string& Config::get(const string &key) {
-
+	return settings[key];
 }

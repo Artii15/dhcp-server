@@ -6,10 +6,12 @@
 
 class Config {
 	public:
-		Config(const std::string &filePath);
+		Config(const char* filePath);
 		const std::string& get(const std::string &key);
 	
 	private:
-		void parse(const std::string &filePath)
-		std::map<const std::string, const std::string> settings;
+		void parse(const char* filePath);
+		std::map<std::string, std::string> settings;
 };
+
+#endif
