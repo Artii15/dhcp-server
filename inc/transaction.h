@@ -7,11 +7,12 @@ class Transaction {
 	public:
 		Transaction();
 		Transaction(const Transaction& copy);
-		Transaction(uint32_t id, uint32_t allocatedIpAddress);
+		Transaction(uint32_t id, uint32_t allocatedIpAddress, uint32_t leaseTime);
 
 	private:
 		uint32_t id;
 		uint32_t allocatedIpAddress;
+		uint32_t leaseTime;
 };
 
 #endif

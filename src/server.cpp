@@ -86,7 +86,7 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 
 void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
 	if(!transactionExists(dhcpMsg->xid)) {
-		Transaction transaction(dhcpMsg->xid, 3232235876);
+		Transaction transaction(dhcpMsg->xid, 3232235876, 1000000000);
 		transactions[dhcpMsg->xid] = transaction;
 	}
 }
