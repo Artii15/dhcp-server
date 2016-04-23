@@ -121,6 +121,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), 17, 0xffffffff, lnetHandle);
 	uint8_t broadcastEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 	libnet_autobuild_ethernet(broadcastEthAddr, 0x0800, lnetHandle);
+	libnet_write(lnetHandle);
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
