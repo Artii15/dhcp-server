@@ -8,6 +8,8 @@
 #define MAX_BOOT_FILE_NAME_SIZE 128
 #define MAX_OPTIONS_SIZE 312
 
+#define BOOTREQUEST 1
+
 struct DHCPMessage {
 	uint8_t op;
 	uint8_t htype;

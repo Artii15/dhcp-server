@@ -1,5 +1,6 @@
 #include "../inc/server.h"
 #include "../inc/dhcp_message.h"
+#include "../inc/options.h"
 
 #include <netdb.h>
 #include <stdio.h>
@@ -68,5 +69,7 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	unsigned int dhcpMsgStartPos = sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
 	struct DHCPMessage* dhcpMsg = (struct DHCPMessage*)(rawMessage + dhcpMsgStartPos);
 
-	printf("%u\n", dhcpMsg->op);
+	if(dhcpMsg->op == BOOTREQUEST) {
+		Options options(dhcpMsg->options, header->caplen - dhcpMsgStartPos);	
+	}
 }
