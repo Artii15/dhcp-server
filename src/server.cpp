@@ -146,7 +146,7 @@ uint8_t* Server::packMessageType(uint8_t* dst, uint8_t messageType) {
 }
 
 uint8_t* Server::packServerIdentifier(uint8_t* dst) {
-	*(dst++) = SERVER_IDENTIFIER
+	*(dst++) = SERVER_IDENTIFIER;
 	*(dst++) = sizeof(identifier);
 	memcpy(dst, &identifier, sizeof(identifier));
 
