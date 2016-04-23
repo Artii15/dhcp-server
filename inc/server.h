@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include <pcap/pcap.h>
+#include <libnet.h>
 #include <unordered_map>
 #include "config.h"
 #include "options.h"
@@ -20,6 +21,10 @@ class Server {
 		char pcapErrbuf[PCAP_ERRBUF_SIZE];
 		pcap_t* pcapHandle;
 		bpf_u_int32 serverIpAddr, serverIpMask;
+
+		char lnetErrbuf[LIBNET_ERRBUF_SIZE];
+		libnet_t* lnetHandle;
+
 		std::unordered_map<uint32_t, Transaction> transactions;
 
 		void setPacketsFilter();

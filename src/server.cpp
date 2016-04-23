@@ -30,6 +30,8 @@ Server::Server(Config& config) {
 		throw pcapErrbuf;
 	}
 
+	lnetHandle = libnet_init(LIBNET_LINK, interfaceName, lnetErrbuf);
+
 	setPacketsFilter();
 }
 
@@ -60,6 +62,7 @@ void Server::setPacketsFilter() {
 
 Server::~Server() {
 	pcap_close(pcapHandle); 
+	libnet_destroy(lnetHandle);
 }
 
 void Server::listen() {
