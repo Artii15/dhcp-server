@@ -118,6 +118,9 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	optionsPtr = packNetworkMask(optionsPtr, transaction.networkMask);
 
 	libnet_ptag_t ptag = libnet_build_udp(67, 68, LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), 17, 0xffffffff, lnetHandle);
+	uint8_t broadcastEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	libnet_autobuild_ethernet(broadcastEthAddr, 0x0800, lnetHandle);
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
