@@ -4,6 +4,8 @@
 #include <netdb.h>
 #include <stdio.h>
 #include <linux/if_ether.h>
+#include <linux/ip.h>
+#include <linux/udp.h>
 
 #define MAX_FILTER_SIZE 64
 
@@ -41,7 +43,7 @@ void Server::setPacketsFilter() {
 	uint16_t bootpClientPort = ntohs(bootpClientService->s_port);
 
 	char filter[MAX_FILTER_SIZE] = {0};
-	snprintf(filter, MAX_FILTER_SIZE - 1, "ip and udp dst port %u and udp src port %u", bootpServerPort, bootpClientPort);
+	snprintf(filter, MAX_FILTER_SIZE - 1, "ether proto 0x%04x and udp dst port %u and udp src port %u", ETH_P_IP, bootpServerPort, bootpClientPort);
 	if(pcap_compile(pcapHandle, &fp, filter, 0, serverIpMask) != 0) {
 		throw pcapErrbuf;
 	}
@@ -61,6 +63,10 @@ void Server::listen() {
 void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *rawMessage) {
 	struct ethhdr* layer2Header = (struct ethhdr*)rawMessage;
 	printf("[%dB of %dB]\n", header->caplen, header->len);
-	printf("pkttype %04x\n", ntohs(layer2Header->h_proto));
+	printf("source address %02x:%02x:%02x:%02x:%02x:%02x\n", layer2Header->h_source[0], layer2Header->h_source[1], layer2Header->h_source[2], layer2Header->h_source[3], layer2Header->h_source[4], layer2Header->h_source[5]);
+	
+	unsigned int dhcpMsgStartPos = sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
+	struct DHCPMessage* dhcpMsg = (struct DHCPMessage*)(rawMessage + dhcpMsgStartPos);
 
+	printf("%u\n", dhcpMsg->op);
 }

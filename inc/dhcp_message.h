@@ -24,6 +24,6 @@ struct DHCPMessage {
 	uint8_t sname[MAX_SERVER_NAME_SIZE];
 	uint8_t file[MAX_BOOT_FILE_NAME_SIZE];
 	uint8_t options[MAX_OPTIONS_SIZE];
-};
+} __attribute__((packed));
 
 #endif
