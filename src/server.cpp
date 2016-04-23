@@ -68,9 +68,17 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	
 	unsigned int dhcpMsgStartPos = sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
 	struct DHCPMessage* dhcpMsg = (struct DHCPMessage*)(rawMessage + dhcpMsgStartPos);
+	Options options(dhcpMsg->options, header->caplen - dhcpMsgStartPos);	
 
-	if(dhcpMsg->op == BOOTREQUEST) {
-		Options options(dhcpMsg->options, header->caplen - dhcpMsgStartPos);	
-		printf("%u\n", options.get(53).code);
+	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
+	switch(operationType) {
+		case(DHCPDISCOVER): {
+			printf("%u\n", operationType);
+			break;	
+		}
+		case(DHCPREQUEST): {
+			printf("%u\n", operationType);
+			break;	
+		}
 	}
 }

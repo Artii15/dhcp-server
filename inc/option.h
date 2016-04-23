@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+#define DHCP_MESSAGE_TYPE 53
+#define DHCPDISCOVER 1
+#define DHCPOFFER 2
+#define DHCPREQUEST 3
+
 struct Option {
 	uint8_t code;
 	uint8_t length;
