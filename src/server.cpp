@@ -117,7 +117,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	optionsPtr = packServerIdentifier(optionsPtr);
 	optionsPtr = packNetworkMask(optionsPtr, transaction.networkMask);
 
-	
+	libnet_ptag_t ptag = libnet_build_udp(67, 68, LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
