@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string>
+#include <stdexcept>
 
 using namespace std;
 
@@ -12,14 +13,25 @@ AddressesPool::AddressesPool(const char* poolString) {
 	istringstream segments(poolString);
 	string buffer;
 
-	getline(segments, buffer, ':');
-	inet_aton(buffer.c_str(), (struct in_addr*)&startAddress);
+	struct in_addr address;
 
 	getline(segments, buffer, ':');
-	inet_aton(buffer.c_str(), (struct in_addr*)&endAddress);
+	if(inet_aton(buffer.c_str(), &address) == 0) {
+		throw runtime_error("Invalid start address");
+	}
+	startAddress = ntohl(address.s_addr);
 
 	getline(segments, buffer, ':');
-	inet_aton(buffer.c_str(), (struct in_addr*)&networkMask);
+	if(inet_aton(buffer.c_str(), &address) == 0) {
+		throw runtime_error("Invalid end address");
+	}
+	endAddress = ntohl(address.s_addr);
+
+	getline(segments, buffer, ':');
+	if(inet_aton(buffer.c_str(), &address) == 0) {
+		throw runtime_error("Invalid mask");
+	}
+	networkMask = ntohl(address.s_addr);
 
 	getline(segments, buffer);
 	leaseTime = stoul(buffer);
