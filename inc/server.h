@@ -36,6 +36,8 @@ class Server {
 		uint8_t* packServerIdentifier(uint8_t* dst);
 		uint8_t* packNetworkMask(uint8_t* dst, uint32_t mask);
 
+		void handleRequest(struct DHCPMessage* dhcpMsg, Options* options);
+
 		bool transactionExists(uint32_t id);
 };
 

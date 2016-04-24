@@ -76,7 +76,7 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 			break;	
 		}
 		case(DHCPREQUEST): {
-			printf("%u\n", operationType);
+			((Server*)server)->handleRequest(dhcpMsg, &options);
 			break;	
 		}
 	}
@@ -124,6 +124,12 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	libnet_write(lnetHandle);
 }
 
+bool Server::transactionExists(uint32_t id) {
+	unordered_map<uint32_t, Transaction>::iterator transactionsIterator = transactions.find(id);
+
+	return transactionsIterator != transactions.end();
+}
+
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
 	*(dst++) = IP_ADDRESS_LEASE_TIME;
 	*(dst++) = sizeof(leaseTime);
@@ -160,8 +166,8 @@ uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
 	return dst + sizeof(mask);
 }
 
-bool Server::transactionExists(uint32_t id) {
-	unordered_map<uint32_t, Transaction>::iterator transactionsIterator = transactions.find(id);
-
-	return transactionsIterator != transactions.end();
+void Server::handleRequest(struct DHCPMessage* dhcpMsg, Options* options) {
+	if(!transactionExists(dhcpMsg->xid)) {
+		Transaction &transaction = transactions[dhcpMsg->xid];
+	}
 }
