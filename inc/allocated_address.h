@@ -8,7 +8,7 @@ struct AllocatedAddress {
 	uint32_t networkMask;
 
 	inline bool operator == (const AllocatedAddress &address) const {
-        return (ipAddress == address.ipAddress && networkMask = address.networkMask);
+        return (ipAddress == address.ipAddress && networkMask == address.networkMask);
     }
 };
 
