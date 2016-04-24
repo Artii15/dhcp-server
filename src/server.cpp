@@ -95,6 +95,7 @@ void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
 	if(!transactionExists(dhcpMsg->xid)) {
 		Transaction transaction(dhcpMsg->xid, 3232235876, 4294967040, 1000000000);
 		transactions[dhcpMsg->xid] = transaction;
+		sendOffer(dhcpMsg, transaction);
 	}
 }
 
@@ -121,7 +122,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), 17, 0xffffffff, lnetHandle);
 	uint8_t broadcastEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 	libnet_autobuild_ethernet(broadcastEthAddr, 0x0800, lnetHandle);
-	libnet_write(lnetHandle);
+	printf("%d\n", libnet_write(lnetHandle));
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
