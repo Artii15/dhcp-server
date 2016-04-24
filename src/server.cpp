@@ -98,7 +98,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	offer.htype = dhcpMsg->htype;
 	offer.hlen = dhcpMsg->hlen;
 	offer.xid = dhcpMsg->xid;
-	offer.yiaddr = transaction.allocatedIpAddress;
+	offer.yiaddr = htonl(transaction.allocatedIpAddress);
 	offer.flags = dhcpMsg->flags;
 	offer.giaddr = dhcpMsg->giaddr;
 	memcpy(offer.chaddr, dhcpMsg->chaddr, MAX_HADDR_SIZE);
@@ -111,9 +111,12 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	*(optionsPtr++) = END_OPTION;
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, (dhcpMsg->flags & BROADCAST_FLAG) ? 0xffffffff : offer.yiaddr, lnetHandle);
+
+	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, performBroadcast ? 0xffffffff : offer.yiaddr, lnetHandle);
+
 	uint8_t broadcastEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	libnet_autobuild_ethernet(broadcastEthAddr, ETH_P_IP, lnetHandle);
+	libnet_autobuild_ethernet(performBroadcast ? broadcastEthAddr : dhcpMsg->chaddr, ETH_P_IP, lnetHandle);
 
 	libnet_write(lnetHandle);
 }
@@ -147,7 +150,9 @@ uint8_t* Server::packServerIdentifier(uint8_t* dst) {
 uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
 	*(dst++) = SUBNET_MASK;
 	*(dst++) = sizeof(mask);
-	memcpy(dst, &mask, sizeof(mask));
+
+	uint32_t normalizedMask = htonl(mask);
+	memcpy(dst, &normalizedMask, sizeof(mask));
 
 	return dst + sizeof(mask);
 }
