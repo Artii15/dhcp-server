@@ -13,7 +13,7 @@ class AddressesPool {
 	private:
 		uint32_t startAddress;
 		uint32_t endAddress;
-		uint32_t lastAssigned;
+		uint32_t nextToAssign;
 		uint32_t networkMask;
 		uint32_t leaseTime;
 		
