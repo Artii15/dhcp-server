@@ -11,6 +11,8 @@
 #define BOOTREQUEST 1
 #define BOOTREPLY 2
 
+#define BROADCAST_FLAG 0x1000000000000000
+
 struct DHCPMessage {
 	uint8_t op;
 	uint8_t htype;

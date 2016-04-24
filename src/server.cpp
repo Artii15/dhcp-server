@@ -111,9 +111,9 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	*(optionsPtr++) = END_OPTION;
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, 0xffffffff, lnetHandle);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, (dhcpMsg->flags & BROADCAST_FLAG) ? 0xffffffff : offer.yiaddr, lnetHandle);
 	uint8_t broadcastEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	libnet_autobuild_ethernet(broadcastEthAddr, 0x0800, lnetHandle);
+	libnet_autobuild_ethernet(broadcastEthAddr, ETH_P_IP, lnetHandle);
 
 	libnet_write(lnetHandle);
 }
