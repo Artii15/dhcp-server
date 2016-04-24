@@ -115,8 +115,11 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
 	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, performBroadcast ? 0xffffffff : offer.yiaddr, lnetHandle);
 
-	uint8_t broadcastEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	libnet_autobuild_ethernet(performBroadcast ? broadcastEthAddr : dhcpMsg->chaddr, ETH_P_IP, lnetHandle);
+	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	if(!performBroadcast) {
+		memcpy(dstEthAddr, dhcpMsg->chaddr, 6);
+	}
+	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
 
 	libnet_write(lnetHandle);
 }
