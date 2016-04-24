@@ -6,6 +6,7 @@
 #define DHCPDISCOVER 1
 #define DHCPOFFER 2
 #define DHCPREQUEST 3
+#define DHCPACK 5
 
 #define SUBNET_MASK 1
 #define IP_ADDRESS_LEASE_TIME 51

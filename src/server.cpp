@@ -169,5 +169,40 @@ uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
 void Server::handleRequest(struct DHCPMessage* dhcpMsg, Options* options) {
 	if(!transactionExists(dhcpMsg->xid)) {
 		Transaction &transaction = transactions[dhcpMsg->xid];
+		sendAck(dhcpMsg, transaction);
 	}
+}
+
+void Server::sendAck(DHCPMessage* dhcpMsg, Transaction &transaction) {
+	DHCPMessage ack;		
+	memset(&ack, 0, sizeof(ack));
+
+	ack.op = BOOTREPLY;
+	ack.htype = dhcpMsg->htype;
+	ack.hlen = dhcpMsg->hlen;
+	ack.xid = dhcpMsg->xid;
+	ack.yiaddr = htonl(transaction.allocatedIpAddress);
+	ack.flags = dhcpMsg->flags;
+	ack.giaddr = dhcpMsg->giaddr;
+	memcpy(ack.chaddr, dhcpMsg->chaddr, MAX_HADDR_SIZE);
+	ack.magicCookie = dhcpMsg->magicCookie;
+
+	uint8_t* optionsPtr = packIpAddressLeaseTime(ack.options, transaction.leaseTime);
+	optionsPtr = packMessageType(optionsPtr, DHCPACK);
+	optionsPtr = packServerIdentifier(optionsPtr);
+	optionsPtr = packNetworkMask(optionsPtr, transaction.networkMask);
+	*(optionsPtr++) = END_OPTION;
+
+	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(ack), 0, (uint8_t*)&ack, sizeof(ack), lnetHandle, 0);
+
+	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(ack), IPPROTO_UDP, performBroadcast ? 0xffffffff : ack.yiaddr, lnetHandle);
+
+	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	if(!performBroadcast) {
+		memcpy(dstEthAddr, dhcpMsg->chaddr, 6);
+	}
+	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
+
+	libnet_write(lnetHandle);
 }
