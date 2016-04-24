@@ -122,6 +122,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, Transaction &transaction) {
 	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
 
 	libnet_write(lnetHandle);
+	libnet_clear_packet(lnetHandle);
 }
 
 bool Server::transactionExists(uint32_t id) {
@@ -167,7 +168,7 @@ uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
 }
 
 void Server::handleRequest(struct DHCPMessage* dhcpMsg, Options* options) {
-	if(!transactionExists(dhcpMsg->xid)) {
+	if(transactionExists(dhcpMsg->xid)) {
 		Transaction &transaction = transactions[dhcpMsg->xid];
 		sendAck(dhcpMsg, transaction);
 	}
@@ -205,4 +206,5 @@ void Server::sendAck(DHCPMessage* dhcpMsg, Transaction &transaction) {
 	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
 
 	libnet_write(lnetHandle);
+	libnet_clear_packet(lnetHandle);
 }
