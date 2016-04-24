@@ -14,6 +14,17 @@ AddressesPool::AddressesPool(const char* poolString) {
 	string buffer;
 	getline(segments, buffer, ':');
 	inet_aton(buffer.c_str(), (struct in_addr*)&startAddress);
+	lastAssigned = startAddress - 1;
+
+	getline(segments, buffer, ':');
+	inet_aton(buffer.c_str(), (struct in_addr*)&endAddress);
+
+	getline(segments, buffer, ':');
+	inet_aton(buffer.c_str(), (struct in_addr*)&networkMask);
+
+	getline(segments, buffer);
+	leaseTime = stoul(buffer);
+
 }
 
 uint32_t AddressesPool::getNext() {
