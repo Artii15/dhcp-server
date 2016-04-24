@@ -40,7 +40,16 @@ AddressesPool::AddressesPool(const char* poolString) {
 }
 
 uint32_t AddressesPool::getNext() {
-	return nextToAssign++;
+	uint32_t nextAddress = findAbandonedAddress() || (nextToAssign++);
+
+	addressesInUse.insert(nextAddress);
+	abandonedAddresses.erase(nextAddress);
+
+	return nextAddress;
+}
+
+uint32_t AddressesPool::findAbandonedAddress() {
+	return (abandonedAddresses.begin() == abandonedAddresses.end()) ? 0 : *abandonedAddresses.begin();
 }
 
 bool AddressesPool::isInUse(uint32_t address) {

@@ -16,8 +16,11 @@ class AddressesPool {
 		uint32_t nextToAssign;
 		uint32_t networkMask;
 		uint32_t leaseTime;
-		
+
 		std::unordered_set<uint32_t> addressesInUse;
+		std::unordered_set<uint32_t> abandonedAddresses;
+
+		uint32_t findAbandonedAddress();
 };
 
 #endif
