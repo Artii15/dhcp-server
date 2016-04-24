@@ -6,7 +6,7 @@
 
 class AddressesAllocator {
 	public:
-		bool allocate(const HardwareAddress& clientAddress, uint32_t ipAddress);
+		uint32_t allocate(const HardwareAddress& clientAddress, uint32_t networkAddress);
 };
 
 #endif
