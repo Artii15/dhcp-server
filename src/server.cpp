@@ -1,7 +1,7 @@
 #include "../inc/server.h"
 #include "../inc/dhcp_message.h"
+#include "../inc/protocol.h"
 
-#include <netdb.h>
 #include <stdio.h>
 #include <linux/if_ether.h>
 #include <linux/ip.h>
@@ -38,17 +38,8 @@ Server::Server(Config& config) {
 void Server::setPacketsFilter() {
 	struct bpf_program fp;
 
-	struct servent* bootpServerService = getservbyname("bootps", "udp");
-	if(bootpServerService == NULL) {
-		throw "Could determine bootps service port for udp";
-	}
-	uint16_t bootpServerPort = ntohs(bootpServerService->s_port);
-
-	struct servent* bootpClientService = getservbyname("bootpc", "udp");
-	if(bootpClientService == NULL) {
-		throw "Could determine bootpc service port for udp";
-	}
-	uint16_t bootpClientPort = ntohs(bootpClientService->s_port);
+	uint16_t bootpServerPort = Protocol::getServicePortByName("bootps", "udp");
+	uint16_t bootpClientPort = Protocol::getServicePortByName("bootpc", "udp");
 
 	char filter[MAX_FILTER_SIZE] = {0};
 	snprintf(filter, MAX_FILTER_SIZE - 1, "ether proto 0x%04x and udp dst port %u and udp src port %u", ETH_P_IP, bootpServerPort, bootpClientPort);
