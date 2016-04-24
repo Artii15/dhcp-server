@@ -7,6 +7,8 @@
 
 class AddressesAllocator {
 	public:
+		AllocatedAddress allocate();
+		AllocatedAddress allocate(uint32_t networkAddress);
 		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t networkAddress);
 };
 
