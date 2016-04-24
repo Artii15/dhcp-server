@@ -55,3 +55,8 @@ uint32_t AddressesPool::findAbandonedAddress() {
 bool AddressesPool::isInUse(uint32_t address) {
 	return addressesInUse.find(address) != addressesInUse.end();
 }
+
+void AddressesPool::abandon(uint32_t address) {
+	addressesInUse.erase(address);
+	abandonedAddresses.insert(address);
+}

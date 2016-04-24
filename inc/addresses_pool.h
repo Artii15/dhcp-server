@@ -8,6 +8,7 @@ class AddressesPool {
 	public:
 		AddressesPool(const char* poolString);
 		uint32_t getNext();
+		void abandon(uint32_t address);
 		bool isInUse(uint32_t address);
 
 	private:
