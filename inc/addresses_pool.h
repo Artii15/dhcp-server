@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <unordered_set>
+#include <regex>
 
 class AddressesPool {
 	public:
@@ -11,7 +12,11 @@ class AddressesPool {
 		void abandon(uint32_t address);
 		bool isInUse(uint32_t address);
 
+		static bool isValidPoolString(const char* poolString);
+
 	private:
+		static std::regex validPoolStringPattern;
+
 		uint32_t startAddress;
 		uint32_t endAddress;
 		uint32_t nextToAssign;

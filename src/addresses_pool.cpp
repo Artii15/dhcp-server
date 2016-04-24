@@ -67,3 +67,8 @@ void AddressesPool::abandon(uint32_t address) {
 	addressesInUse.erase(address);
 	abandonedAddresses.insert(address);
 }
+
+regex AddressesPool::validPoolStringPattern = regex("\\d{1,3}(\\.\\d{1,3}){3}:\\d{1,3}(\\.\\d{1,3}){3}:\\d{1,3}(\\.\\d{1,3}){3}:\\d+");
+bool AddressesPool::isValidPoolString(const char* poolString) {
+	return regex_match(poolString, AddressesPool::validPoolStringPattern);
+}
