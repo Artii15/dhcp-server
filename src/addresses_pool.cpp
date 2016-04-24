@@ -40,12 +40,19 @@ AddressesPool::AddressesPool(const char* poolString) {
 }
 
 uint32_t AddressesPool::getNext() {
-	uint32_t nextAddress = findAbandonedAddress() || (nextToAssign++);
+	uint32_t nextAddress = findAbandonedAddress() || generateFreshAddress();
 
 	addressesInUse.insert(nextAddress);
 	abandonedAddresses.erase(nextAddress);
 
 	return nextAddress;
+}
+
+uint32_t AddressesPool::generateFreshAddress() {
+	if(nextToAssign > endAddress) {
+		throw runtime_error("No more addresses to assign");
+	}
+	return nextToAssign++;
 }
 
 uint32_t AddressesPool::findAbandonedAddress() {

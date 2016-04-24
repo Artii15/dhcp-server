@@ -22,6 +22,7 @@ class AddressesPool {
 		std::unordered_set<uint32_t> abandonedAddresses;
 
 		uint32_t findAbandonedAddress();
+		uint32_t generateFreshAddress();
 };
 
 #endif
