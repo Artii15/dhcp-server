@@ -1,7 +1,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <string>
 #include <list>
 #include "pool_descriptor.h"
 
@@ -15,7 +14,7 @@ class Config {
 		uint32_t networkAddress;
 		uint32_t networkMask;
 		
-		std::list<PoolDescriptor> addressesPool;
+		std::list<PoolDescriptor> addressesPools;
 };
 
 #endif

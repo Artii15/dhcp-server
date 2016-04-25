@@ -1,6 +1,8 @@
 #ifndef POOL_DESCRIPTOR_H
 #define POOL_DESCRIPTOR_H
 
+#include <stdint.h>
+
 struct PoolDescriptor {
 	uint32_t startAddress;
 	uint32_t endAddress;
