@@ -2,16 +2,20 @@
 #define CONFIG_H
 
 #include <string>
-#include <unordered_map>
+#include <list>
+#include "pool_descriptor.h"
 
 class Config {
 	public:
 		Config(const char* filePath);
-		const std::string& get(const std::string &key);
+		void load(const char* filePath);
 	
 	private:
-		void parse(const char* filePath);
-		std::unordered_map<std::string, std::string> settings;
+		uint32_t interface;
+		uint32_t networkAddress;
+		uint32_t networkMask;
+		
+		std::list<PoolDescriptor> addressesPool;
 };
 
 #endif

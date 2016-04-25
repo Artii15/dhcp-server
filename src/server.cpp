@@ -16,7 +16,7 @@
 using namespace std;
 
 Server::Server(Config& config) {
-	const char* interfaceName = config.get("interface").c_str();
+	const char* interfaceName = "wlan0";
 	pcapHandle = pcap_create(interfaceName, pcapErrbuf);
 	if(pcapHandle == NULL) {
 		throw pcapErrbuf;

@@ -1,33 +1,35 @@
 #include "../inc/config.h"
 
-#include <fstream>
-#include <sstream>
-
-using namespace std;
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
 
 Config::Config(const char* filePath) {
-	parse(filePath);
+	load(filePath);
 }
 
-void Config::parse(const char* filePath) {
-	ifstream configFile(filePath);
-
-	string line;
-	while(getline(configFile, line)) {
-		istringstream lineBuffer(line);
-		
-		string key;
-		if(getline(lineBuffer, key, '=')) {
-			string value;
-			if(getline(lineBuffer, value)) {
-				settings[key] = value;
-			}
-		}
+void Config::load(const char* filePath) {
+/*
+	using boost::property_tree::ptree;
+	ptree config;
+	read_json("config.json", config);
+	
+	PoolDescriptor poolDescriptor;
+	BOOST_FOREACH(ptree::value_type &pool, config.get_child("addressesPools")) {
+		std::string address = pool.second.get<std::string>("startAddress");
+		poolDescriptor.startAddress = atol(address.c_str());
 	}
 
-	configFile.close();
-}
+	printf("%u\n", poolDescriptor.startAddress);
 
-const string& Config::get(const string &key) {
-	return settings[key];
+struct PoolDescriptor {
+	uint32_t startAddress;
+	uint32_t endAddress;
+	uint32_t networkMask;
+	uint32_t leaseTime;
+	uint32_t dnsAddress;
+	uint32_t routerAddress;
+};
+*/
+
 }
