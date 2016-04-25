@@ -13,14 +13,14 @@ AddressesAllocator::AddressesAllocator(Config& configToUse):config(configToUse) 
 	}
 }
 
+uint32_t AddressesAllocator::calculateNetworkAddress(uint32_t address, uint32_t mask) {
+	return (address & mask);
+}
+
 AddressesAllocator::~AddressesAllocator() {
 	for(unordered_map<uint32_t, AddressesPool*>::iterator poolsIt = addressesPools.begin(); poolsIt != addressesPools.end(); poolsIt++) {
 		delete poolsIt->second;
 	}
-}
-
-uint32_t AddressesAllocator::calculateNetworkAddress(uint32_t address, uint32_t mask) {
-	return address & mask;
 }
 
 AllocatedAddress AddressesAllocator::allocate() {
