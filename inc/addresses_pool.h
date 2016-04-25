@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <unordered_set>
-#include <boost/regex.hpp>
 #include "pool_descriptor.h"
 
 class AddressesPool {
@@ -13,11 +12,7 @@ class AddressesPool {
 		void abandon(uint32_t address);
 		bool isInUse(uint32_t address);
 
-		static bool isValidPoolString(const char* poolString);
-
 	private:
-		static boost::regex validPoolStringPattern;
-
 		const PoolDescriptor descriptor;
 		uint32_t nextToAssign;
 
