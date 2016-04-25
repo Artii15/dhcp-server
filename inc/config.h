@@ -9,6 +9,11 @@ class Config {
 	public:
 		Config(const char* filePath);
 		void load(const char* filePath);
+
+		uint32_t getInterface();
+		uint32_t getNetworkAddress();
+		uint32_t getNetworkMask();
+		const std::list<PoolDescriptor>& getAddressesPools();
 	
 	private:
 		uint32_t interface;

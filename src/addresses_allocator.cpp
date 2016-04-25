@@ -1,7 +1,9 @@
 #include "../inc/addresses_allocator.h"
 
+using namespace std;
+
 AddressesAllocator::AddressesAllocator(Config& configToUse):config(configToUse) {
-	
+		
 }
 
 AllocatedAddress AddressesAllocator::allocate() {

@@ -46,3 +46,19 @@ uint32_t Config::extractAddress(ptree &node, const char* key) {
 
 	return ntohl(addressBuffer.s_addr);
 }
+
+uint32_t Config::getInterface() {
+	return interface;
+}
+
+uint32_t Config::getNetworkAddress() {
+	return networkAddress;
+}
+
+uint32_t Config::getNetworkMask() {
+	return networkMask;
+}
+
+const std::list<PoolDescriptor>& Config::getAddressesPools() {
+	return addressesPools;
+}

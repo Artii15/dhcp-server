@@ -6,6 +6,7 @@
 #include "config.h"
 #include "addresses_pool.h"
 #include <stdint.h>
+#include <unordered_map>
 
 class AddressesAllocator {
 	public:
@@ -16,6 +17,7 @@ class AddressesAllocator {
 		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t networkAddress);
 	private:
 		Config& config;
+		std::unordered_map<uint32_t, AddressesPool> addressesPools;
 };
 
 #endif
