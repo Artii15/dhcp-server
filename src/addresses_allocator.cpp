@@ -8,8 +8,7 @@ AddressesAllocator::AddressesAllocator(Config& configToUse):config(configToUse) 
 	for(list<PoolDescriptor>::const_iterator descriptorsIt = poolsDescriptors.begin(); descriptorsIt != poolsDescriptors.end(); descriptorsIt++) {
 		const PoolDescriptor& poolDescriptor = *descriptorsIt;
 
-		uint32_t networkAddress = calculateNetworkAddress(poolDescriptor.startAddress, poolDescriptor.networkMask);
-		addressesPools[networkAddress] = new AddressesPool(poolDescriptor);
+		addressesPools[calculateNetworkAddress(poolDescriptor.startAddress, poolDescriptor.networkMask)] = new AddressesPool(poolDescriptor);
 	}
 }
 
