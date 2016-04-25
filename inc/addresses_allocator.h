@@ -9,11 +9,13 @@
 
 class AddressesAllocator {
 	public:
-		AddressesAllocator(Config& config, AddressesPool& addressesPool);
+		AddressesAllocator(Config& config);
 
 		AllocatedAddress allocate();
 		AllocatedAddress allocate(uint32_t networkAddress);
 		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t networkAddress);
+	private:
+		Config& config;
 };
 
 #endif

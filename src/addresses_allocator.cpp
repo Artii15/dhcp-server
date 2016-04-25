@@ -1,5 +1,9 @@
 #include "../inc/addresses_allocator.h"
 
+AddressesAllocator::AddressesAllocator(Config& configToUse):config(configToUse) {
+	
+}
+
 AllocatedAddress AddressesAllocator::allocate() {
 	return AllocatedAddress();	
 }
