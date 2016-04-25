@@ -22,14 +22,7 @@ AddressesAllocator::~AddressesAllocator() {
 	}
 }
 
-AllocatedAddress AddressesAllocator::allocate() {
-	return AllocatedAddress();	
-}
+AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddress, uint32_t giaddr) {
 
-AllocatedAddress AddressesAllocator::allocate(uint32_t networkAddress) {
-	return AllocatedAddress();	
-}
-
-AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddress, uint32_t networkAddress) {
 	return AllocatedAddress();	
 }
