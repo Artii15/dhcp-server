@@ -8,8 +8,9 @@
 
 using namespace std;
 
-AddressesPool::AddressesPool(const char* poolString) {
+AddressesPool::AddressesPool(const PoolDescriptor poolDescriptor):descriptor(poolDescriptor) {
 	// Example pool string: 192.168.1.2:192.168.1.254:255.255.255.0:24
+	/*
 	istringstream segments(poolString);
 	string buffer;
 
@@ -37,6 +38,8 @@ AddressesPool::AddressesPool(const char* poolString) {
 	leaseTime = stoul(buffer);
 
 	nextToAssign = startAddress;
+	*/
+	nextToAssign = descriptor.startAddress;
 }
 
 uint32_t AddressesPool::getNext() {
@@ -49,7 +52,7 @@ uint32_t AddressesPool::getNext() {
 }
 
 uint32_t AddressesPool::generateFreshAddress() {
-	if(nextToAssign > endAddress) {
+	if(nextToAssign > descriptor.endAddress) {
 		throw runtime_error("No more addresses to assign");
 	}
 	return nextToAssign++;
