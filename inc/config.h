@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <list>
+#include <boost/property_tree/ptree.hpp>
 #include "pool_descriptor.h"
 
 class Config {
@@ -15,6 +16,8 @@ class Config {
 		uint32_t networkMask;
 		
 		std::list<PoolDescriptor> addressesPools;
+
+		uint32_t extractAddress(boost::property_tree::ptree::value_type &pool, const char* key);
 };
 
 #endif
