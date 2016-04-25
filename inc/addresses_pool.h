@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <unordered_set>
-#include <regex>
+#include <boost/regex.hpp>
 
 class AddressesPool {
 	public:
@@ -15,7 +15,7 @@ class AddressesPool {
 		static bool isValidPoolString(const char* poolString);
 
 	private:
-		static std::regex validPoolStringPattern;
+		static boost::regex validPoolStringPattern;
 
 		uint32_t startAddress;
 		uint32_t endAddress;
