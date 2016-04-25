@@ -11,13 +11,16 @@
 class AddressesAllocator {
 	public:
 		AddressesAllocator(Config& config);
+		~AddressesAllocator();
 
 		AllocatedAddress allocate();
 		AllocatedAddress allocate(uint32_t networkAddress);
 		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t networkAddress);
 	private:
 		Config& config;
-		std::unordered_map<uint32_t, AddressesPool> addressesPools;
+		std::unordered_map<uint32_t, AddressesPool*> addressesPools;
+
+		uint32_t calculateNetworkAddress(uint32_t address, uint32_t mask);
 };
 
 #endif

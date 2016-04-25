@@ -59,6 +59,6 @@ uint32_t Config::getNetworkMask() {
 	return networkMask;
 }
 
-const std::list<PoolDescriptor>& Config::getAddressesPools() {
+const std::list<PoolDescriptor>& Config::getPoolsDescriptors() {
 	return addressesPools;
 }

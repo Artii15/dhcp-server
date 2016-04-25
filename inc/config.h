@@ -13,7 +13,7 @@ class Config {
 		uint32_t getInterface();
 		uint32_t getNetworkAddress();
 		uint32_t getNetworkMask();
-		const std::list<PoolDescriptor>& getAddressesPools();
+		const std::list<PoolDescriptor>& getPoolsDescriptors();
 	
 	private:
 		uint32_t interface;
