@@ -5,14 +5,16 @@ using namespace std;
 AddressesAllocator::AddressesAllocator(Config& configToUse):config(configToUse) {
 	const list<PoolDescriptor>& poolsDescriptors = config.getPoolsDescriptors();
 
-	for(list<PoolDescriptor>::iterator descriptorsIt; descriptorsIt != poolsDescriptors.end(); descriptorsIt++) {
-		PoolDescriptor& poolDescriptor = *descriptorsIt;
-		addressesPools[calculateNetworkAddress(poolDescriptor.startAddress, poolDescriptor.networkMask)] = new AddressesPool(poolDescriptor);
+	for(list<PoolDescriptor>::const_iterator descriptorsIt = poolsDescriptors.begin(); descriptorsIt != poolsDescriptors.end(); descriptorsIt++) {
+		const PoolDescriptor& poolDescriptor = *descriptorsIt;
+
+		uint32_t networkAddress = calculateNetworkAddress(poolDescriptor.startAddress, poolDescriptor.networkMask);
+		addressesPools[networkAddress] = new AddressesPool(poolDescriptor);
 	}
 }
 
 AddressesAllocator::~AddressesAllocator() {
-	for(unordered_map<uint32_t, AddressesPool*>::iterator poolsIt; poolsIt != addressesPools.end(); poolsIt++) {
+	for(unordered_map<uint32_t, AddressesPool*>::iterator poolsIt = addressesPools.begin(); poolsIt != addressesPools.end(); poolsIt++) {
 		delete poolsIt->second;
 	}
 }

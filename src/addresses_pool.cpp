@@ -8,7 +8,7 @@
 
 using namespace std;
 
-AddressesPool::AddressesPool(const PoolDescriptor poolDescriptor):descriptor(poolDescriptor) {
+AddressesPool::AddressesPool(const PoolDescriptor& poolDescriptor):descriptor(poolDescriptor) {
 	nextToAssign = descriptor.startAddress;
 }
 
