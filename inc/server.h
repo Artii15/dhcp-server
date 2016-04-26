@@ -5,13 +5,13 @@
 #include <libnet.h>
 #include <unordered_map>
 #include "options.h"
-#include "transaction.h"
 #include "addresses_allocator.h"
 #include "config.h"
+#include "transactions_storage.h"
 
 class Server {
 	public:
-		Server(AddressesAllocator &allocator, Config &config);
+		Server(Config&, AddressesAllocator&, TransactionsStorage&);
 		~Server();
 
 		void listen();
@@ -19,6 +19,7 @@ class Server {
 	private:
 		Config &config;
 		AddressesAllocator &addressesAllocator;
+		TransactionsStorage &transactionsStorage;
 
 		static void dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *bytes);
 
@@ -30,8 +31,6 @@ class Server {
 
 		char lnetErrbuf[LIBNET_ERRBUF_SIZE];
 		libnet_t* lnetHandle;
-
-		std::unordered_map<uint32_t, Transaction> transactions;
 
 		void setPacketsFilter();
 
@@ -45,9 +44,7 @@ class Server {
 		uint8_t* packDnsServers(uint8_t* dst, const std::list<uint32_t>& servers);
 
 		void handleRequest(struct DHCPMessage* dhcpMsg, Options* options);
-		void sendAck(DHCPMessage* dhcpMsg, Transaction &transaction);
-
-		bool transactionExists(uint32_t id);
+		void sendAck(DHCPMessage* dhcpMsg, const AllocatedAddress &allocatedAddress);
 };
 
 #endif

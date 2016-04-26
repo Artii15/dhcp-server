@@ -6,9 +6,8 @@
 int main(int argc, char** argv) {
 	Config config("config.json");
 	TransactionsStorage storage(config);
-
 	AddressesAllocator allocator(config);
-	Server server(allocator, config);
+	Server server(config, allocator, storage);
 
 	server.listen();
 

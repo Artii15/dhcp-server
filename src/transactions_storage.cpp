@@ -62,3 +62,7 @@ const Transaction& TransactionsStorage::getTransaction(uint32_t id) {
 void TransactionsStorage::removeTransaction(uint32_t id) {
 	transactions.erase(id);
 }
+
+bool TransactionsStorage::transactionExists(uint32_t id) {
+	return transactions.find(id) != transactions.end();
+}

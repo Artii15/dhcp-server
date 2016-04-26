@@ -11,6 +11,7 @@ class TransactionsStorage {
 		void storeTransaction(const Transaction&);
 		const Transaction& getTransaction(uint32_t id);
 		void removeTransaction(uint32_t id);
+		bool transactionExists(uint32_t id);
 
 	private:
 		Config& config;

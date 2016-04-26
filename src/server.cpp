@@ -17,7 +17,9 @@
 
 using namespace std;
 
-Server::Server(AddressesAllocator& allocator, Config &configuration): config(configuration), addressesAllocator(allocator) {
+Server::Server(Config &configuration, AddressesAllocator& allocator, TransactionsStorage& storage)
+ 	  : config(configuration), addressesAllocator(allocator), transactionsStorage(storage) {
+
 	const char* interfaceName = config.getInterface();
 
 	serverIp = determineDeviceIp(interfaceName);
@@ -92,12 +94,11 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 }
 
 void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
-	if(!transactionExists(dhcpMsg->xid)) {
+	if(!transactionsStorage.transactionExists(dhcpMsg->xid)) {
 		HardwareAddress clientAddress(dhcpMsg->htype, dhcpMsg->chaddr);
 		AllocatedAddress allocatedAddress = addressesAllocator.allocate(clientAddress, dhcpMsg->giaddr, 0); //TODO Handle prefered addresses
 
-		Transaction transaction(dhcpMsg->xid, allocatedAddress);
-		transactions[dhcpMsg->xid] = transaction;
+		transactionsStorage.storeTransaction(Transaction(dhcpMsg->xid, allocatedAddress));
 		sendOffer(dhcpMsg, allocatedAddress);
 	}
 }
@@ -137,12 +138,6 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, const AllocatedAddress &allo
 
 	libnet_write(lnetHandle);
 	libnet_clear_packet(lnetHandle);
-}
-
-bool Server::transactionExists(uint32_t id) {
-	unordered_map<uint32_t, Transaction>::iterator transactionsIterator = transactions.find(id);
-
-	return transactionsIterator != transactions.end();
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {
@@ -216,15 +211,13 @@ uint8_t* Server::packDnsServers(uint8_t* dst, const list<uint32_t>& servers) {
 }
 
 void Server::handleRequest(struct DHCPMessage* dhcpMsg, Options* options) {
-	if(transactionExists(dhcpMsg->xid)) {
-		Transaction &transaction = transactions[dhcpMsg->xid];
-		sendAck(dhcpMsg, transaction);
+	if(transactionsStorage.transactionExists(dhcpMsg->xid)) {
+		sendAck(dhcpMsg, transactionsStorage.getTransaction(dhcpMsg->xid).allocatedAddress);
 	}
 }
 
-void Server::sendAck(DHCPMessage* dhcpMsg, Transaction &transaction) {
+void Server::sendAck(DHCPMessage* dhcpMsg, const AllocatedAddress &allocatedAddress) {
 	DHCPMessage ack;
-	const AllocatedAddress& allocatedAddress = transaction.allocatedAddress;
 	memset(&ack, 0, sizeof(ack));
 
 	ack.op = BOOTREPLY;
