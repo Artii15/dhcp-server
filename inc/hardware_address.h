@@ -15,6 +15,10 @@ struct HardwareAddress {
 	inline bool operator > (const HardwareAddress &address) const {
         return (addressType > address.addressType) || ((addressType == address.addressType) && (memcmp(hardwareAddress, address.hardwareAddress, MAX_HADDR_SIZE) > 0));
     }
+
+	inline bool operator < (const HardwareAddress &address) const {
+        return (addressType < address.addressType) || ((addressType == address.addressType) && (memcmp(hardwareAddress, address.hardwareAddress, MAX_HADDR_SIZE) < 0));
+    }
 };
 
 #endif

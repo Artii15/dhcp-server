@@ -24,6 +24,8 @@ AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddre
 	AddressesPool* pool = addressesPools[clientNetwork];
 
 	AllocatedAddress allocatedAddress = pool->getNext();
+	allocatedAddresses[clientAddress] = allocatedAddress;
+
 	return allocatedAddress;
 }
 
