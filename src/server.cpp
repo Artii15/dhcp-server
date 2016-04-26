@@ -241,12 +241,14 @@ void Server::sendAck(DHCPMessage* dhcpMsg, Transaction &transaction) {
 	optionsPtr = packMessageType(optionsPtr, DHCPACK);
 	optionsPtr = packServerIdentifier(optionsPtr);
 	optionsPtr = packNetworkMask(optionsPtr, allocatedAddress.mask);
+	optionsPtr = packRouters(optionsPtr, allocatedAddress.routers);
+	optionsPtr = packDnsServers(optionsPtr, allocatedAddress.dnsServers);
 	*(optionsPtr++) = END_OPTION;
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(ack), 0, (uint8_t*)&ack, sizeof(ack), lnetHandle, 0);
 
 	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(ack), IPPROTO_UDP, performBroadcast ? 0xffffffff : ack.yiaddr, lnetHandle);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(ack), IPPROTO_UDP, performBroadcast ? 0xffffffffffffffff : ack.yiaddr, lnetHandle);
 
 	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 	if(!performBroadcast) {
