@@ -2,14 +2,13 @@
 #define ALLOCATED_ADDRESS_H
 
 #include <stdint.h>
+#include "pool_descriptor.h"
 
 struct AllocatedAddress {
 	uint32_t ipAddress;
-	uint32_t networkMask;
-
-	inline bool operator == (const AllocatedAddress &address) const {
-        return (ipAddress == address.ipAddress && networkMask == address.networkMask);
-    }
+	uint32_t mask;
+	uint32_t routerAddress;
+	uint32_t dnsAddress;
 };
 
 #endif

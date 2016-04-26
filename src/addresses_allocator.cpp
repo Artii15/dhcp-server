@@ -23,7 +23,8 @@ AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddre
 	uint32_t clientNetwork = determineClientNetwork(giaddr);
 	AddressesPool* pool = addressesPools[clientNetwork];
 
-	return AllocatedAddress();
+	AllocatedAddress allocatedAddress = pool->getNext();
+	return allocatedAddress;
 }
 
 uint32_t AddressesAllocator::determineClientNetwork(uint32_t giaddr) {

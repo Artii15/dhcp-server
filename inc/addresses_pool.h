@@ -4,14 +4,14 @@
 #include <stdint.h>
 #include <unordered_set>
 #include "pool_descriptor.h"
+#include "allocated_address.h"
 
 class AddressesPool {
 	public:
 		AddressesPool(const PoolDescriptor&);
 
-		uint32_t getNext();
+		AllocatedAddress getNext();
 		void abandon(uint32_t address);
-		bool isInUse(uint32_t address);
 
 		uint32_t getNetworkAddress();
 		bool mayContain(uint32_t address);

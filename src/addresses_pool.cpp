@@ -21,13 +21,17 @@ uint32_t AddressesPool::calculateNetworkAddress(uint32_t address, uint32_t mask)
 	return (address & mask);
 }
 
-uint32_t AddressesPool::getNext() {
-	uint32_t nextAddress = findAbandonedAddress() || generateFreshAddress();
+AllocatedAddress AddressesPool::getNext() {
+	AllocatedAddress allocatedAddress;
+	allocatedAddress.ipAddress = findAbandonedAddress() || generateFreshAddress();
+	allocatedAddress.mask = descriptor.networkMask;
+	allocatedAddress.routerAddress = descriptor.routerAddress;
+	allocatedAddress.dnsAddress = descriptor.dnsAddress;
 
-	addressesInUse.insert(nextAddress);
-	abandonedAddresses.erase(nextAddress);
+	addressesInUse.insert(allocatedAddress.ipAddress);
+	abandonedAddresses.erase(allocatedAddress.ipAddress);
 
-	return nextAddress;
+	return allocatedAddress;
 }
 
 uint32_t AddressesPool::generateFreshAddress() {
@@ -39,10 +43,6 @@ uint32_t AddressesPool::generateFreshAddress() {
 
 uint32_t AddressesPool::findAbandonedAddress() {
 	return (abandonedAddresses.begin() == abandonedAddresses.end()) ? 0 : *abandonedAddresses.begin();
-}
-
-bool AddressesPool::isInUse(uint32_t address) {
-	return addressesInUse.find(address) != addressesInUse.end();
 }
 
 void AddressesPool::abandon(uint32_t address) {
