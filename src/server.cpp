@@ -121,6 +121,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, const AllocatedAddress &allo
 	optionsPtr = packServerIdentifier(optionsPtr);
 	optionsPtr = packNetworkMask(optionsPtr, allocatedAddress.mask);
 	optionsPtr = packRouters(optionsPtr, allocatedAddress.routers);
+	optionsPtr = packDnsServers(optionsPtr, allocatedAddress.dnsServers);
 	*(optionsPtr++) = END_OPTION;
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
