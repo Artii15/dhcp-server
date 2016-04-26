@@ -15,6 +15,8 @@ class TransactionsStorage {
 	private:
 		Config& config;
 		std::unordered_map<uint32_t, Transaction> transactions;
+
+		void scheduleCleanTask(uint32_t transactionId);
 };
 
 #endif

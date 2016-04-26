@@ -24,16 +24,18 @@ void deleteOldTransaction(union sigval data) {
 
 void TransactionsStorage::storeTransaction(const Transaction& transaction) {
 	transactions[transaction.id] = transaction;
+	scheduleCleanTask(transaction.id);
+}
 
+void TransactionsStorage::scheduleCleanTask(uint32_t transactionId) {
 	CleanTaskData* taskData = new CleanTaskData();
-	taskData->transactionId = transaction.id;
+	taskData->transactionId = transactionId;
 	taskData->transactions = &transactions;
 
 	struct sigevent onTick;
 	memset(&onTick, 0, sizeof(onTick));
 	onTick.sigev_notify = SIGEV_THREAD;
 	onTick.sigev_signo = 0;
-
 	onTick.sigev_value.sival_ptr = taskData;
 	onTick.sigev_notify_function = deleteOldTransaction;
 
