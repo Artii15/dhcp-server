@@ -5,7 +5,7 @@ IDIR=inc
 SDIR=src
 ODIR=obj
 CC="g++ -std=c++11 "
-LFLAGS="-Wall -O3 -lnet -lpcap"
+LFLAGS="-Wall -O3 -lnet -lpcap -lrt"
 CFLAGS="-Wall -O3 -c"
 
 echo "all: $TARGET" > Makefile
