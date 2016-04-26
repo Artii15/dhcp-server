@@ -9,7 +9,7 @@ struct PoolDescriptor {
 	uint32_t endAddress;
 	uint32_t networkMask;
 	uint32_t leaseTime;
-	uint32_t dnsAddress;
+	std::list<uint32_t> dnsServers;
 	std::list<uint32_t> routers;
 };
 

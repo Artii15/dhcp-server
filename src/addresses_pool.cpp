@@ -27,7 +27,7 @@ AllocatedAddress AddressesPool::getNext() {
 	}
 	allocatedAddress.mask = descriptor.networkMask;
 	allocatedAddress.routers = descriptor.routers;
-	allocatedAddress.dnsAddress = descriptor.dnsAddress;
+	allocatedAddress.dnsServers = descriptor.dnsServers;
 	allocatedAddress.leaseTime = descriptor.leaseTime;
 
 	addressesInUse.insert(allocatedAddress.ipAddress);

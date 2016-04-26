@@ -42,6 +42,7 @@ class Server {
 		uint8_t* packServerIdentifier(uint8_t* dst);
 		uint8_t* packNetworkMask(uint8_t* dst, uint32_t mask);
 		uint8_t* packRouters(uint8_t* dst, const std::list<uint32_t>& routers);
+		uint8_t* packDnsServers(uint8_t* dst, const std::list<uint32_t>& servers);
 
 		void handleRequest(struct DHCPMessage* dhcpMsg, Options* options);
 		void sendAck(DHCPMessage* dhcpMsg, Transaction &transaction);

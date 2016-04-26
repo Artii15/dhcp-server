@@ -31,9 +31,9 @@ void Config::load(const char* filePath) {
 		poolDescriptor.startAddress = extractAddress(pool, "startAddress");
 		poolDescriptor.endAddress = extractAddress(pool, "endAddress");
 		poolDescriptor.networkMask = extractAddress(pool, "networkMask");
-		poolDescriptor.dnsAddress = extractAddress(pool, "dnsAddress");
 
 		extractAddressesList(pool.get_child("routers"), poolDescriptor.routers);
+		extractAddressesList(pool.get_child("dnsServers"), poolDescriptor.dnsServers);
 
 		poolDescriptor.leaseTime = pool.get<uint32_t>("leaseTime");
 

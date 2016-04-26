@@ -126,7 +126,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, const AllocatedAddress &allo
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
 
 	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, performBroadcast ? 0xffffffff : offer.yiaddr, lnetHandle);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, performBroadcast ? 0xffffffffffffffff : offer.yiaddr, lnetHandle);
 
 	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 	if(!performBroadcast) {
@@ -181,15 +181,34 @@ uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
 }
 
 uint8_t* Server::packRouters(uint8_t* dst, const list<uint32_t>& routers) {
-	*(dst++) = ROUTERS;
+	if(!routers.empty()) {
+		*(dst++) = ROUTERS;
 
-	uint32_t routersSizeInBytes = routers.size() * sizeof(uint32_t);
-	*(dst++) = routersSizeInBytes;
+		uint32_t routersSizeInBytes = routers.size() * sizeof(uint32_t);
+		*(dst++) = routersSizeInBytes;
 
-	for(list<uint32_t>::iterator routersIt; routersIt != routers.end(); routersIt++) {
-		uint32_t router = htonl(*routersIt);
-		memcpy(dst, &router, sizeof(router));
-		dst += sizeof(router);
+		for(list<uint32_t>::iterator routersIt; routersIt != routers.end(); routersIt++) {
+			uint32_t router = htonl(*routersIt);
+			memcpy(dst, &router, sizeof(router));
+			dst += sizeof(router);
+		}
+	}
+
+	return dst;
+}
+
+uint8_t* Server::packDnsServers(uint8_t* dst, const list<uint32_t>& servers) {
+	if(!servers.empty()) {
+		*(dst++) = DNS_OPTION;
+
+		uint32_t serversSizeInBytes = servers.size() * sizeof(uint32_t);
+		*(dst++) = serversSizeInBytes;
+
+		for(list<uint32_t>::iterator serversIt; serversIt != servers.end(); serversIt++) {
+			uint32_t server = htonl(*serversIt);
+			memcpy(dst, &server, sizeof(server));
+			dst += sizeof(server);
+		}
 	}
 
 	return dst;
