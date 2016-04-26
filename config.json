@@ -7,7 +7,7 @@
 			"startAddress": "192.168.1.2",
 			"endAddress": "192.168.1.254",
 			"networkMask": "255.255.255.0",
-			"leaseTime": 24,
+			"leaseTime": 86400,
 			"dnsAddress": "8.8.8.8",
 			"routerAddress": "192.168.1.1"
 		}

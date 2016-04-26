@@ -1,5 +1,4 @@
 #include "../inc/addresses_pool.h"
-#include <sstream>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -23,7 +22,9 @@ uint32_t AddressesPool::calculateNetworkAddress(uint32_t address, uint32_t mask)
 
 AllocatedAddress AddressesPool::getNext() {
 	AllocatedAddress allocatedAddress;
-	allocatedAddress.ipAddress = findAbandonedAddress() || generateFreshAddress();
+	if((allocatedAddress.ipAddress = findAbandonedAddress()) == 0) {
+		allocatedAddress.ipAddress = generateFreshAddress();
+	}
 	allocatedAddress.mask = descriptor.networkMask;
 	allocatedAddress.routerAddress = descriptor.routerAddress;
 	allocatedAddress.dnsAddress = descriptor.dnsAddress;
