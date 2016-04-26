@@ -17,7 +17,8 @@ TransactionsStorage::TransactionsStorage(Config& configuration): config(configur
 void deleteOldTransaction(union sigval data) {
 	CleanTaskData* taskData = (CleanTaskData*)data.sival_ptr;
 	taskData->transactions->erase(taskData->transactionId);
-	
+
+	timer_delete(taskData->timer);
 	delete taskData;
 }
 
@@ -38,6 +39,17 @@ void TransactionsStorage::storeTransaction(const Transaction& transaction) {
 
 	if(timer_create(CLOCK_MONOTONIC, &onTick, &taskData->timer) < 0) {
 		throw runtime_error("Could not create clock for transaction delete task");
+	}
+
+	struct itimerspec newValue;
+	memset(&newValue, 0, sizeof(newValue));
+	newValue.it_value.tv_sec = config.getTransactionStorageTime();
+
+	struct itimerspec oldValue;
+	memset(&oldValue, 0, sizeof(oldValue));
+
+	if(timer_settime(taskData->timer, 0, &newValue, &oldValue) < 0) {
+		throw runtime_error("Could not set timer for transaction delete task");
 	}
 }
 

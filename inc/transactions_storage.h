@@ -13,7 +13,7 @@ class TransactionsStorage {
 		void removeTransaction(uint32_t id);
 
 	private:
-		const Config& config;
+		Config& config;
 		std::unordered_map<uint32_t, Transaction> transactions;
 };
 

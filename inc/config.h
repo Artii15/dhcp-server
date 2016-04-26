@@ -14,12 +14,14 @@ class Config {
 		const char* getInterface();
 		uint32_t getNetworkAddress();
 		uint32_t getNetworkMask();
+		uint32_t getTransactionStorageTime();
 		const std::list<PoolDescriptor>& getPoolsDescriptors();
 	
 	private:
 		std::string interface;
 		uint32_t networkAddress;
 		uint32_t networkMask;
+		uint32_t transactionStorageTime;
 		
 		std::list<PoolDescriptor> addressesPools;
 

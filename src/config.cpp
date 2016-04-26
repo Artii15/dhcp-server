@@ -39,6 +39,8 @@ void Config::load(const char* filePath) {
 
 		addressesPools.push_back(poolDescriptor);
 	}
+
+	transactionStorageTime = config.get<uint32_t>("transactionStorageTime");
 }
 
 uint32_t Config::extractAddress(ptree &node, const char* key) {
@@ -75,4 +77,8 @@ uint32_t Config::getNetworkMask() {
 
 const std::list<PoolDescriptor>& Config::getPoolsDescriptors() {
 	return addressesPools;
+}
+
+uint32_t Config::getTransactionStorageTime() {
+	return transactionStorageTime;
 }
