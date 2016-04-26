@@ -13,6 +13,8 @@ class AddressesPool {
 		void abandon(uint32_t address);
 		bool isInUse(uint32_t address);
 
+		uint32_t getNetworkMask();
+
 	private:
 		const PoolDescriptor descriptor;
 		uint32_t nextToAssign;

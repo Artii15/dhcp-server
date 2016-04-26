@@ -40,3 +40,7 @@ void AddressesPool::abandon(uint32_t address) {
 	addressesInUse.erase(address);
 	abandonedAddresses.insert(address);
 }
+
+uint32_t AddressesPool::getNetworkMask() {
+	return descriptor.networkMask;
+}

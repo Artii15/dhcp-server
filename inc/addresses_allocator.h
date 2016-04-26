@@ -14,13 +14,15 @@ class AddressesAllocator {
 		AddressesAllocator(Config& config);
 		~AddressesAllocator();
 
-		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t giaddr);
+		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t giaddr, uint32_t preferedAddress);
 	private:
 		Config& config;
 		std::unordered_map<uint32_t, AddressesPool*> addressesPools;
 		std::map<HardwareAddress, AllocatedAddress> allocatedAddresses;
 
 		uint32_t calculateNetworkAddress(uint32_t address, uint32_t mask);
+		uint32_t determineClientNetwork(uint32_t giaddr);
+		uint32_t matchNetworkToAddress(uint32_t address);
 };
 
 #endif
