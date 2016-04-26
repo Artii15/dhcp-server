@@ -9,6 +9,7 @@ struct AllocatedAddress {
 	uint32_t mask;
 	uint32_t routerAddress;
 	uint32_t dnsAddress;
+	uint32_t leaseTime;
 };
 
 #endif

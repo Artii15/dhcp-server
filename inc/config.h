@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include <list>
+#include <string>
 #include <boost/property_tree/ptree.hpp>
 #include "pool_descriptor.h"
 
@@ -10,13 +11,15 @@ class Config {
 		Config(const char* filePath);
 		void load(const char* filePath);
 
-		uint32_t getInterface();
+		const char* getInterface();
 		uint32_t getNetworkAddress();
+		uint32_t getNetworkMask();
 		const std::list<PoolDescriptor>& getPoolsDescriptors();
 	
 	private:
-		uint32_t interface;
+		std::string interface;
 		uint32_t networkAddress;
+		uint32_t networkMask;
 		
 		std::list<PoolDescriptor> addressesPools;
 

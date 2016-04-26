@@ -1,6 +1,7 @@
 {
 	"interface": "wlan0",
 	"networkAddress": "192.168.1.0",
+	"networkMask": "255.255.255.0",
 	"addressesPools": [
 		{
 			"startAddress": "192.168.1.2",

@@ -4,23 +4,29 @@
 #include <pcap/pcap.h>
 #include <libnet.h>
 #include <unordered_map>
-#include "config.h"
 #include "options.h"
 #include "transaction.h"
+#include "addresses_allocator.h"
+#include "config.h"
 
 class Server {
 	public:
-		Server(Config &config);
+		Server(AddressesAllocator &allocator, Config &config);
 		~Server();
 
 		void listen();
 
 	private:
+		Config &config;
+		AddressesAllocator &addressesAllocator;
+
 		static void dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *bytes);
+
+		uint32_t determineDeviceIp(const char* interfaceName);
 
 		char pcapErrbuf[PCAP_ERRBUF_SIZE];
 		pcap_t* pcapHandle;
-		bpf_u_int32 serverIpAddr, serverIpMask;
+		uint32_t serverIp;
 
 		char lnetErrbuf[LIBNET_ERRBUF_SIZE];
 		libnet_t* lnetHandle;
@@ -30,7 +36,7 @@ class Server {
 		void setPacketsFilter();
 
 		void handleDiscover(struct DHCPMessage* dhcpMsg, Options* options);
-		void sendOffer(DHCPMessage* dhcpMsg, Transaction &transaction);
+		void sendOffer(DHCPMessage* dhcpMsg, const AllocatedAddress &allocatedAddress);
 		uint8_t* packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime);
 		uint8_t* packMessageType(uint8_t* dst, uint8_t messageType);
 		uint8_t* packServerIdentifier(uint8_t* dst);

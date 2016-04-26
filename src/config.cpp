@@ -20,8 +20,9 @@ void Config::load(const char* filePath) {
 	ptree config;
 	read_json(filePath, config);
 
-	interface = extractAddress(config, "interface");
+	interface = config.get<std::string>("interface");
 	networkAddress = extractAddress(config, "networkAddress");
+	networkMask = extractAddress(config, "networkMask");
 	
 	BOOST_FOREACH(ptree::value_type &poolNode, config.get_child("addressesPools")) {
 		ptree &pool = poolNode.second;
@@ -46,12 +47,16 @@ uint32_t Config::extractAddress(ptree &node, const char* key) {
 	return ntohl(addressBuffer.s_addr);
 }
 
-uint32_t Config::getInterface() {
-	return interface;
+const char* Config::getInterface() {
+	return interface.c_str();;
 }
 
 uint32_t Config::getNetworkAddress() {
 	return networkAddress;
+}
+
+uint32_t Config::getNetworkMask() {
+	return networkMask;
 }
 
 const std::list<PoolDescriptor>& Config::getPoolsDescriptors() {

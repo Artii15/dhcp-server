@@ -27,6 +27,7 @@ AllocatedAddress AddressesPool::getNext() {
 	allocatedAddress.mask = descriptor.networkMask;
 	allocatedAddress.routerAddress = descriptor.routerAddress;
 	allocatedAddress.dnsAddress = descriptor.dnsAddress;
+	allocatedAddress.leaseTime = descriptor.leaseTime;
 
 	addressesInUse.insert(allocatedAddress.ipAddress);
 	abandonedAddresses.erase(allocatedAddress.ipAddress);
