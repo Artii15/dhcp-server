@@ -32,7 +32,9 @@ void Config::load(const char* filePath) {
 		poolDescriptor.endAddress = extractAddress(pool, "endAddress");
 		poolDescriptor.networkMask = extractAddress(pool, "networkMask");
 		poolDescriptor.dnsAddress = extractAddress(pool, "dnsAddress");
-		poolDescriptor.routerAddress = extractAddress(pool, "routerAddress");
+
+		extractAddressesList(pool.get_child("routers"), poolDescriptor.routers);
+
 		poolDescriptor.leaseTime = pool.get<uint32_t>("leaseTime");
 
 		addressesPools.push_back(poolDescriptor);
@@ -40,9 +42,21 @@ void Config::load(const char* filePath) {
 }
 
 uint32_t Config::extractAddress(ptree &node, const char* key) {
-	std::string rawDataBuffer = node.get<std::string>(key);
+	std::string addressString = node.get<std::string>(key);
+
+	return addrFromString(addressString);
+}
+
+void Config::extractAddressesList(ptree &addresses, std::list<uint32_t>& target) {
+	BOOST_FOREACH(ptree::value_type &rawAddress, addresses) {
+		std::string addressString = rawAddress.second.data();	
+		target.push_back(addrFromString(addressString));
+	}
+}
+
+uint32_t Config::addrFromString(std::string& addressString) {
 	struct in_addr addressBuffer;
-	inet_aton(rawDataBuffer.c_str(), &addressBuffer);
+	inet_aton(addressString.c_str(), &addressBuffer);
 
 	return ntohl(addressBuffer.s_addr);
 }

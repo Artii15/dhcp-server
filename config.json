@@ -9,7 +9,7 @@
 			"networkMask": "255.255.255.0",
 			"leaseTime": 86400,
 			"dnsAddress": "8.8.8.8",
-			"routerAddress": "192.168.1.1"
+			"routers": ["192.168.1.1"]
 		}
 	]
 }

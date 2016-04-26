@@ -23,7 +23,9 @@ class Config {
 		
 		std::list<PoolDescriptor> addressesPools;
 
+		uint32_t addrFromString(std::string& addressString);
 		uint32_t extractAddress(boost::property_tree::ptree &node, const char* key);
+		void extractAddressesList(boost::property_tree::ptree &addresses, std::list<uint32_t>& target);
 };
 
 #endif

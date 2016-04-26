@@ -9,6 +9,7 @@
 #define DHCPACK 5
 
 #define SUBNET_MASK 1
+#define ROUTERS 3
 #define IP_ADDRESS_LEASE_TIME 51
 #define DHCP_MESSAGE_TYPE 53
 #define SERVER_IDENTIFIER 54

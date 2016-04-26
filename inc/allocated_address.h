@@ -2,12 +2,13 @@
 #define ALLOCATED_ADDRESS_H
 
 #include <stdint.h>
+#include <list>
 #include "pool_descriptor.h"
 
 struct AllocatedAddress {
 	uint32_t ipAddress;
 	uint32_t mask;
-	uint32_t routerAddress;
+	std::list<uint32_t> routers;
 	uint32_t dnsAddress;
 	uint32_t leaseTime;
 };

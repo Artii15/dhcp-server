@@ -120,6 +120,7 @@ void Server::sendOffer(struct DHCPMessage* dhcpMsg, const AllocatedAddress &allo
 	optionsPtr = packMessageType(optionsPtr, DHCPOFFER);
 	optionsPtr = packServerIdentifier(optionsPtr);
 	optionsPtr = packNetworkMask(optionsPtr, allocatedAddress.mask);
+	optionsPtr = packRouters(optionsPtr, allocatedAddress.routers);
 	*(optionsPtr++) = END_OPTION;
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
@@ -177,6 +178,21 @@ uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
 	memcpy(dst, &normalizedMask, sizeof(mask));
 
 	return dst + sizeof(mask);
+}
+
+uint8_t* Server::packRouters(uint8_t* dst, const list<uint32_t>& routers) {
+	*(dst++) = ROUTERS;
+
+	uint32_t routersSizeInBytes = routers.size() * sizeof(uint32_t);
+	*(dst++) = routersSizeInBytes;
+
+	for(list<uint32_t>::iterator routersIt; routersIt != routers.end(); routersIt++) {
+		uint32_t router = htonl(*routersIt);
+		memcpy(dst, &router, sizeof(router));
+		dst += sizeof(router);
+	}
+
+	return dst;
 }
 
 void Server::handleRequest(struct DHCPMessage* dhcpMsg, Options* options) {
