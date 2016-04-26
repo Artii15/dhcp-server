@@ -10,6 +10,15 @@ using namespace std;
 
 AddressesPool::AddressesPool(const PoolDescriptor& poolDescriptor):descriptor(poolDescriptor) {
 	nextToAssign = descriptor.startAddress;
+	networkAddress = calculateNetworkAddress(descriptor.startAddress, descriptor.networkMask);
+}
+
+bool AddressesPool::mayContain(uint32_t address) {
+	return calculateNetworkAddress(address, descriptor.networkMask) == networkAddress;
+}
+
+uint32_t AddressesPool::calculateNetworkAddress(uint32_t address, uint32_t mask) {
+	return (address & mask);
 }
 
 uint32_t AddressesPool::getNext() {
@@ -41,6 +50,6 @@ void AddressesPool::abandon(uint32_t address) {
 	abandonedAddresses.insert(address);
 }
 
-uint32_t AddressesPool::getNetworkMask() {
-	return descriptor.networkMask;
+uint32_t AddressesPool::getNetworkAddress() {
+	return networkAddress;
 }

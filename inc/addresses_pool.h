@@ -13,10 +13,12 @@ class AddressesPool {
 		void abandon(uint32_t address);
 		bool isInUse(uint32_t address);
 
-		uint32_t getNetworkMask();
+		uint32_t getNetworkAddress();
+		bool mayContain(uint32_t address);
 
 	private:
 		const PoolDescriptor descriptor;
+		uint32_t networkAddress;
 		uint32_t nextToAssign;
 
 		std::unordered_set<uint32_t> addressesInUse;
@@ -24,6 +26,7 @@ class AddressesPool {
 
 		uint32_t findAbandonedAddress();
 		uint32_t generateFreshAddress();
+		uint32_t calculateNetworkAddress(uint32_t address, uint32_t mask);
 };
 
 #endif

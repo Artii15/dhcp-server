@@ -7,13 +7,10 @@ AddressesAllocator::AddressesAllocator(Config& configToUse):config(configToUse) 
 
 	for(list<PoolDescriptor>::const_iterator descriptorsIt = poolsDescriptors.begin(); descriptorsIt != poolsDescriptors.end(); descriptorsIt++) {
 		const PoolDescriptor& poolDescriptor = *descriptorsIt;
+		AddressesPool* pool = new AddressesPool(poolDescriptor);
 
-		addressesPools[calculateNetworkAddress(poolDescriptor.startAddress, poolDescriptor.networkMask)] = new AddressesPool(poolDescriptor);
+		addressesPools[pool->getNetworkAddress()] = pool;
 	}
-}
-
-uint32_t AddressesAllocator::calculateNetworkAddress(uint32_t address, uint32_t mask) {
-	return (address & mask);
 }
 
 AddressesAllocator::~AddressesAllocator() {
@@ -23,7 +20,9 @@ AddressesAllocator::~AddressesAllocator() {
 }
 
 AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddress, uint32_t giaddr, uint32_t preferedAddress) {
-		
+	uint32_t clientNetwork = determineClientNetwork(giaddr);
+	AddressesPool* pool = addressesPools[clientNetwork];
+
 	return AllocatedAddress();
 }
 
@@ -34,9 +33,9 @@ uint32_t AddressesAllocator::determineClientNetwork(uint32_t giaddr) {
 uint32_t AddressesAllocator::matchNetworkToAddress(uint32_t address) {
 	for(unordered_map<uint32_t, AddressesPool*>::iterator poolsIt = addressesPools.begin(); poolsIt != addressesPools.end(); poolsIt++) {
 		uint32_t networkAddress = poolsIt->first;
-		uint32_t networkMask = poolsIt->second->getNetworkMask();
+		AddressesPool* pool = poolsIt->second;
 
-		if(calculateNetworkAddress(address, networkMask) == networkAddress) {
+		if(pool->mayContain(address)) {
 			return networkAddress;
 		}
 	}
