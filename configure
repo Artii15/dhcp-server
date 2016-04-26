@@ -1,0 +1,25 @@
+#!/bin/bash
+
+TARGET=dhcp_server
+IDIR=inc
+SDIR=src
+ODIR=obj
+CC="g++ -std=c++11 "
+LFLAGS="-Wall -O3 -lnet -lpcap"
+CFLAGS="-Wall -O3 -c"
+
+echo "all: $TARGET" > Makefile
+objs=$(ls $SDIR/*.cpp | sed -r 's/\.cpp/\.o/g' | sed -r 's/'$SDIR'\//'$ODIR'\//g')
+echo "$TARGET: "$objs >> Makefile
+echo -e "\t""$CC "$objs" $LFLAGS -o $TARGET" >> Makefile
+
+for file in $SDIR/*.cpp
+do
+	echo $ODIR"/"$($CC -MM -std=c++11 -I $IDIR $file | sed -r 's/\\//g') >> Makefile
+	echo -e "\t""$CC $file -o \$@ "$CFLAGS >> Makefile
+done
+
+echo "clean:" >> Makefile
+echo -e "\t""rm -f $ODIR/*" >> Makefile
+
+mkdir -p obj

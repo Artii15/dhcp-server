@@ -1,6 +1,6 @@
-#include "inc/config.h"
-#include "inc/addresses_allocator.h"
-#include "inc/server.h"
+#include "../inc/config.h"
+#include "../inc/addresses_allocator.h"
+#include "../inc/server.h"
 
 int main(int argc, char** argv) {
 	Config config("config.json");
