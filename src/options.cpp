@@ -28,3 +28,7 @@ void Options::read(uint8_t* rawOptions, unsigned maxOptionsLength) {
 Option& Options::get(uint8_t code) {
 	return options[code];
 }
+
+bool Options::exists(uint8_t code) {
+	return options.find(code) != options.end();
+}

@@ -1,6 +1,7 @@
 #include "../inc/server.h"
 #include "../inc/dhcp_message.h"
 #include "../inc/protocol.h"
+#include "../inc/client.h"
 
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -79,6 +80,28 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	unsigned int dhcpMsgStartPos = sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
 	struct DHCPMessage* dhcpMsg = (struct DHCPMessage*)(rawMessage + dhcpMsgStartPos);
 	Options options(dhcpMsg->options, header->caplen - dhcpMsgStartPos);
+
+	Client client;
+	memset(&client, 0, sizeof(client));
+
+	HardwareAddress clientHardwareAddress;
+	clientHardwareAddress.addressType = dhcpMsg->htype;
+	memcpy(clientHardwareAddress.hardwareAddress, dhcpMsg->chaddr, MAX_HADDR_SIZE);
+
+	ClientSpecialId clientSpecialId;
+	if(options.exists(CLIENT_IDENTIFIER)) {
+		Option& clientIdOption = options.get(CLIENT_IDENTIFIER);
+		clientSpecialId.type = *clientIdOption.value;
+		memcpy(clientSpecialId.value, clientIdOption.value + 1, clientIdOption.length);
+
+		client.id.specialId = &clientSpecialId;
+		client.idType = SPECIAL_ID;
+	}
+	else {
+		client.id.hardwareAddress = &clientHardwareAddress;
+		client.idType = ID_BASED_ON_HARDWARE;
+	}
+
 
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
 	switch(operationType) {
