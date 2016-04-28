@@ -21,6 +21,7 @@ using namespace std;
 Server::Server(Config &configuration, AddressesAllocator& allocator, TransactionsStorage& storage)
  	  : config(configuration), addressesAllocator(allocator), transactionsStorage(storage) {
 
+	networkResolver = new NetworkResolver(config);
 	const char* interfaceName = config.getInterface();
 
 	serverIp = determineDeviceIp(interfaceName);
@@ -70,6 +71,7 @@ void Server::setPacketsFilter() {
 Server::~Server() {
 	pcap_close(pcapHandle); 
 	libnet_destroy(lnetHandle);
+	delete networkResolver;
 }
 
 void Server::listen() {
@@ -97,6 +99,7 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	else {
 		client.identificationMethod = BASED_ON_HARDWARE;
 	}
+	client.networkAddress = ((Server*)server)->networkResolver->determineNetworkAddress(dhcpMsg->giaddr);
 
 
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;

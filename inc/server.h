@@ -8,6 +8,7 @@
 #include "addresses_allocator.h"
 #include "config.h"
 #include "transactions_storage.h"
+#include "network_resolver.h"
 
 class Server {
 	public:
@@ -20,6 +21,7 @@ class Server {
 		Config &config;
 		AddressesAllocator &addressesAllocator;
 		TransactionsStorage &transactionsStorage;
+		NetworkResolver* networkResolver;
 
 		static void dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *bytes);
 

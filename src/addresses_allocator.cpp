@@ -57,6 +57,5 @@ uint32_t AddressesAllocator::matchNetworkToAddress(uint32_t address) {
 }
 
 bool AddressesAllocator::hasClientAllocatedAddress(const Client&) {
-	
 	return true;
 }

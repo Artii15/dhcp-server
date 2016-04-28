@@ -6,12 +6,12 @@
 class NetworkResolver {
 	public:
 		NetworkResolver(Config&);
-		uint32_t determineNetworkAddress(uint32_t chaddr);
+		uint32_t determineNetworkAddress(uint32_t giaddr);
 
 	private:
 		Config& config;
 
-		uint32_t findNetworkAddressInDescriptors(uint32_t chaddr);
+		uint32_t findNetworkAddressInDescriptors(uint32_t giaddr);
 };
 
 #endif
