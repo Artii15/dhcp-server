@@ -32,11 +32,11 @@ AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddre
 }
 
 
-AllocatedAddress allocate(const Client& client, uint32_t address) {
+AllocatedAddress AddressesAllocator::reallocateOldAddress(const Client& client) {
 	return AllocatedAddress();
 }
 
-AllocatedAddress allocateAnyAddress(const Client& client) {
+AllocatedAddress AddressesAllocator::allocateNewAddress(const Client& client) {
 	return AllocatedAddress();	
 }
 
