@@ -21,8 +21,8 @@ AddressesAllocator::~AddressesAllocator() {
 
 // TODO: Remove this method later
 AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddress, uint32_t giaddr, uint32_t preferedAddress) {
-	uint32_t clientNetwork = determineClientNetwork(giaddr);
-	AddressesPool* pool = addressesPools[clientNetwork];
+	//uint32_t clientNetwork = determineClientNetwork(giaddr);
+	//AddressesPool* pool = addressesPools[clientNetwork];
 
 	//AllocatedAddress allocatedAddress = pool->getNext();
 	//allocatedByHardware[1][clientAddress] = allocatedAddress;

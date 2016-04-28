@@ -4,20 +4,13 @@ DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToH
 	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator) {}
 
 void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
-	if(transactionsStorage.transactionExists(message.xid)) {
-		return;
-	}
-
-	if(allocator.hasClientAllocatedAddress(client)) {
-		assignPreviouslyAssignedAddress();	
-	}
-	else {
-		assignFreshAddress();
+	if(!transactionsStorage.transactionExists(message.xid)) {
+		allocator.hasClientAllocatedAddress(client) ? assignPreviouslyAssignedAddress() : assignFreshAddress();
 	}
 }
 
 void DiscoverHandler::assignPreviouslyAssignedAddress() {
-
+	
 }
 
 void DiscoverHandler::assignFreshAddress() {
