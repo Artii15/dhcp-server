@@ -96,7 +96,7 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
 	if(!transactionsStorage.transactionExists(dhcpMsg->xid)) {
 		HardwareAddress clientAddress(dhcpMsg->htype, dhcpMsg->chaddr);
-		AllocatedAddress allocatedAddress = addressesAllocator.allocate(clientAddress, dhcpMsg->giaddr, 0); //TODO Handle prefered addresses
+		AllocatedAddress allocatedAddress = addressesAllocator.allocate(clientAddress, ntohl(dhcpMsg->giaddr), ntohl(dhcpMsg->yiaddr));
 
 		transactionsStorage.storeTransaction(Transaction(dhcpMsg->xid, allocatedAddress));
 		sendOffer(dhcpMsg, allocatedAddress);
