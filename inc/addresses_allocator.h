@@ -2,6 +2,7 @@
 #define ADDRESSES_ALLOCATOR_H
 
 #include "hardware_address.h"
+#include "client_special_id.h"
 #include "allocated_address.h"
 #include "config.h"
 #include "addresses_pool.h"
@@ -20,7 +21,8 @@ class AddressesAllocator {
 	private:
 		Config& config;
 		std::unordered_map<uint32_t, AddressesPool*> addressesPools;
-		std::map<HardwareAddress, AllocatedAddress> allocatedAddresses;
+		std::map<uint32_t, std::map<HardwareAddress, AllocatedAddress> > allocatedByHardware;
+		std::map<uint32_t, std::map<ClientSpecialId, AllocatedAddress> > allocatedBySpecialId;
 
 		uint32_t determineClientNetwork(uint32_t giaddr);
 		uint32_t matchNetworkToAddress(uint32_t address);
