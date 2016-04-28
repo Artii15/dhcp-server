@@ -4,14 +4,12 @@
 #include "hardware_address.h"
 #include "client_special_id.h"
 
-enum ClientIdType { ID_BASED_ON_HARDWARE, SPECIAL_ID };
+enum IdentificationMethod { BASED_ON_HARDWARE, BASED_ON_SPECIAL_ID };
 struct Client {
-	union id {
-		HardwareAddress* hardwareAddress;	
-		ClientSpecialId* specialId;
-	} id;
+	HardwareAddress hardwareAddress;
+	ClientSpecialId specialId;
 
-	ClientIdType idType;	
+	IdentificationMethod identificationMethod;
 };
 
 #endif

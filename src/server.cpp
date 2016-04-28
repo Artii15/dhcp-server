@@ -84,22 +84,18 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	Client client;
 	memset(&client, 0, sizeof(client));
 
-	HardwareAddress clientHardwareAddress;
-	clientHardwareAddress.addressType = dhcpMsg->htype;
-	memcpy(clientHardwareAddress.hardwareAddress, dhcpMsg->chaddr, MAX_HADDR_SIZE);
+	client.hardwareAddress.addressType = dhcpMsg->htype;
+	memcpy(client.hardwareAddress.hardwareAddress, dhcpMsg->chaddr, MAX_HADDR_SIZE);
 
-	ClientSpecialId clientSpecialId;
 	if(options.exists(CLIENT_IDENTIFIER)) {
 		Option& clientIdOption = options.get(CLIENT_IDENTIFIER);
-		clientSpecialId.type = *clientIdOption.value;
-		memcpy(clientSpecialId.value, clientIdOption.value + 1, clientIdOption.length);
+		client.specialId.type = *clientIdOption.value;
+		memcpy(client.specialId.value, clientIdOption.value + 1, (CLIENT_SPECIAL_ID_MAX_LEN < clientIdOption.length) ? CLIENT_SPECIAL_ID_MAX_LEN : clientIdOption.length);
 
-		client.id.specialId = &clientSpecialId;
-		client.idType = SPECIAL_ID;
+		client.identificationMethod = BASED_ON_SPECIAL_ID;
 	}
 	else {
-		client.id.hardwareAddress = &clientHardwareAddress;
-		client.idType = ID_BASED_ON_HARDWARE;
+		client.identificationMethod = BASED_ON_HARDWARE;
 	}
 
 
