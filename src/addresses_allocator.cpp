@@ -44,3 +44,7 @@ uint32_t AddressesAllocator::matchNetworkToAddress(uint32_t address) {
 	}
 	throw runtime_error("Provided address does not belong to any known network!");
 }
+
+bool AddressesAllocator::hasClientAllocatedAddress(const Client&) {
+	return true;
+}

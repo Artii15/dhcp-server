@@ -5,15 +5,20 @@
 #include "options.h"
 #include "transactions_storage.h"
 #include "client.h"
+#include "addresses_allocator.h"
 
 class DiscoverHandler {
 	public:
-		DiscoverHandler(TransactionsStorage& transactionsStorage, Client& client);
+		DiscoverHandler(TransactionsStorage&, Client&, AddressesAllocator&);
 		void handle(struct DHCPMessage&, Options&);
 
 	private:
 		TransactionsStorage& transactionsStorage;
 		Client& client;
+		AddressesAllocator& allocator;
+
+		void assignPreviouslyAssignedAddress();
+		void assignFreshAddress();
 };
 
 #endif

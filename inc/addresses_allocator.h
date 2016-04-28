@@ -5,6 +5,7 @@
 #include "allocated_address.h"
 #include "config.h"
 #include "addresses_pool.h"
+#include "client.h"
 #include <stdint.h>
 #include <unordered_map>
 #include <map>
@@ -15,6 +16,7 @@ class AddressesAllocator {
 		~AddressesAllocator();
 
 		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t giaddr, uint32_t preferedAddress);
+		bool hasClientAllocatedAddress(const Client&);
 	private:
 		Config& config;
 		std::unordered_map<uint32_t, AddressesPool*> addressesPools;

@@ -1,17 +1,25 @@
 #include "../inc/discover_handler.h"
 
-DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToHandle): transactionsStorage(storage), client(clientToHandle) {}
+DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToHandle, AddressesAllocator& addrAllocator)
+	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator) {}
 
 void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 	if(transactionsStorage.transactionExists(message.xid)) {
 		return;
 	}
 
-/*
-	HardwareAddress clientAddress(dhcpMsg->htype, dhcpMsg->chaddr);
-	AllocatedAddress allocatedAddress = addressesAllocator.allocate(clientAddress, ntohl(dhcpMsg->giaddr), ntohl(dhcpMsg->yiaddr));
+	if(allocator.hasClientAllocatedAddress(client)) {
+		assignPreviouslyAssignedAddress();	
+	}
+	else {
+		assignFreshAddress();
+	}
+}
 
-	transactionsStorage.storeTransaction(Transaction(dhcpMsg->xid, allocatedAddress));
-	sendOffer(dhcpMsg, allocatedAddress);
-	*/
+void DiscoverHandler::assignPreviouslyAssignedAddress() {
+
+}
+
+void DiscoverHandler::assignFreshAddress() {
+
 }
