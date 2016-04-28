@@ -1,6 +1,6 @@
 #include "../inc/discover_handler.h"
 
-DiscoverHandler::DiscoverHandler(TransactionsStorage& storage): transactionsStorage(storage) {}
+DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToHandle): transactionsStorage(storage), client(clientToHandle) {}
 
 void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 	if(transactionsStorage.transactionExists(message.xid)) {
