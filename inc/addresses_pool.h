@@ -4,20 +4,20 @@
 #include <stdint.h>
 #include <unordered_set>
 #include "pool_descriptor.h"
-#include "allocated_address.h"
 
 class AddressesPool {
 	public:
 		AddressesPool(const PoolDescriptor&);
 
-		AllocatedAddress getNext();
+		uint32_t getNext();
 		void abandon(uint32_t address);
 
 		uint32_t getNetworkAddress();
 		bool mayContain(uint32_t address);
 
-	private:
 		const PoolDescriptor descriptor;
+
+	private:
 		uint32_t networkAddress;
 		uint32_t nextToAssign;
 

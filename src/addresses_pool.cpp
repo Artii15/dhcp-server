@@ -2,12 +2,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <time.h>
 #include <string>
 #include <stdexcept>
 
 using namespace std;
 
-AddressesPool::AddressesPool(const PoolDescriptor& poolDescriptor):descriptor(poolDescriptor) {
+AddressesPool::AddressesPool(const PoolDescriptor& poolDescriptor): descriptor(poolDescriptor) {
 	nextToAssign = descriptor.startAddress;
 	networkAddress = calculateNetworkAddress(descriptor.startAddress, descriptor.networkMask);
 }
@@ -20,20 +21,10 @@ uint32_t AddressesPool::calculateNetworkAddress(uint32_t address, uint32_t mask)
 	return (address & mask);
 }
 
-AllocatedAddress AddressesPool::getNext() {
-	AllocatedAddress allocatedAddress;
-	if((allocatedAddress.ipAddress = findAbandonedAddress()) == 0) {
-		allocatedAddress.ipAddress = generateFreshAddress();
-	}
-	allocatedAddress.mask = descriptor.networkMask;
-	allocatedAddress.routers = descriptor.routers;
-	allocatedAddress.dnsServers = descriptor.dnsServers;
-	allocatedAddress.leaseTime = descriptor.leaseTime;
+uint32_t AddressesPool::getNext() {
+	uint32_t address = findAbandonedAddress();
 
-	addressesInUse.insert(allocatedAddress.ipAddress);
-	abandonedAddresses.erase(allocatedAddress.ipAddress);
-
-	return allocatedAddress;
+	return address ? address : generateFreshAddress();
 }
 
 uint32_t AddressesPool::generateFreshAddress() {
