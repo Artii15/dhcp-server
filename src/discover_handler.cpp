@@ -7,5 +7,7 @@ void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 	if(!transactionsStorage.transactionExists(message.xid)) {
 		AllocatedAddress& address = allocator.allocateAddressFor(client);
 
+		transactionsStorage.createTransaction(message.xid, &address);
+		//sendOffer(dhcpMsg, allocatedAddress);
 	}
 }
