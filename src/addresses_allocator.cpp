@@ -41,11 +41,12 @@ AllocatedAddress AddressesAllocator::allocateNewAddress(const Client& client) {
 	return AllocatedAddress();	
 }
 
-void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress hardwareAddress, uint32_t address) {
+void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress& hardwareAddress, uint32_t address) {
+	allocatedByHardware[networkAddress][hardwareAddress] = AllocatedAddress();
 }
 
-void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId specialId, uint32_t address) {
-
+void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t address) {
+	allocatedBySpecialId[networkAddress][specialId] = AllocatedAddress();
 }
 
 uint32_t AddressesAllocator::determineClientNetwork(uint32_t giaddr) {
