@@ -2,6 +2,7 @@
 #define ALLOCATED_ADDRESS_H
 
 #include <stdint.h>
+#include <time.h>
 #include <list>
 #include "pool_descriptor.h"
 
@@ -11,6 +12,7 @@ struct AllocatedAddress {
 	const std::list<uint32_t>* dnsServers;
 	const std::list<uint32_t>* routers;
 	uint32_t leaseTime;
+	time_t allocationTime;
 };
 
 #endif

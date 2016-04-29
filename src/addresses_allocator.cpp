@@ -66,6 +66,7 @@ void AddressesAllocator::fillAddress(uint32_t networkAddress, uint32_t ip, Alloc
 	allocatedAddress.dnsServers = &poolDescriptor.dnsServers;
 	allocatedAddress.routers = &poolDescriptor.routers;
 	allocatedAddress.leaseTime = poolDescriptor.leaseTime;
+	allocatedAddress.allocationTime = time(NULL);
 }
 
 uint32_t AddressesAllocator::determineClientNetwork(uint32_t giaddr) {
