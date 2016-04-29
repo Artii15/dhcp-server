@@ -33,11 +33,19 @@ AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddre
 
 
 AllocatedAddress AddressesAllocator::reallocateOldAddress(const Client& client) {
+	
 	return AllocatedAddress();
 }
 
 AllocatedAddress AddressesAllocator::allocateNewAddress(const Client& client) {
 	return AllocatedAddress();	
+}
+
+void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress hardwareAddress, uint32_t address) {
+}
+
+void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId specialId, uint32_t address) {
+
 }
 
 uint32_t AddressesAllocator::determineClientNetwork(uint32_t giaddr) {
@@ -56,6 +64,13 @@ uint32_t AddressesAllocator::matchNetworkToAddress(uint32_t address) {
 	throw runtime_error("Provided address does not belong to any known network!");
 }
 
-bool AddressesAllocator::hasClientAllocatedAddress(const Client&) {
-	return true;
+bool AddressesAllocator::hasClientAllocatedAddress(const Client& client) {
+	if(client.identificationMethod == BASED_ON_HARDWARE) {
+		return allocatedByHardware.find(client.networkAddress) != allocatedByHardware.end() 
+				&& allocatedByHardware[client.networkAddress].find(client.hardwareAddress) != allocatedByHardware[client.networkAddress].end();
+	}
+	else {
+		return allocatedBySpecialId.find(client.networkAddress) != allocatedBySpecialId.end() 
+				&& allocatedBySpecialId[client.networkAddress].find(client.specialId) != allocatedBySpecialId[client.networkAddress].end();
+	}
 }
