@@ -46,8 +46,9 @@ void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress& hard
 	fillAddress(networkAddress, ip, allocatedAddress);
 }
 
-void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t address) {
-	allocatedBySpecialId[networkAddress][specialId] = AllocatedAddress();
+void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t ip) {
+	AllocatedAddress& allocatedAddress = allocatedBySpecialId[networkAddress][specialId];
+	fillAddress(networkAddress, ip, allocatedAddress);
 }
 
 void AddressesAllocator::fillAddress(uint32_t networkAddress, uint32_t ip, AllocatedAddress& allocatedAddress) {
