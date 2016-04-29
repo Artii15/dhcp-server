@@ -1,7 +1,8 @@
 #include "../inc/discover_handler.h"
+#include "../inc/packer.h"
 
-DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToHandle, AddressesAllocator& addrAllocator)
-	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator) {}
+DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToHandle, AddressesAllocator& addrAllocator, Server& serv)
+	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator), server(serv) {}
 
 void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 	if(!transactionsStorage.transactionExists(message.xid)) {
@@ -13,28 +14,29 @@ void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 }
 
 void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocatedAddress) {
-/*
 	DHCPMessage offer;
 	memset(&offer, 0, sizeof(offer));
 
 	offer.op = BOOTREPLY;
-	offer.htype = request->htype;
-	offer.hlen = request->hlen;
-	offer.xid = request->xid;
-	offer.yiaddr = htonl(allocatedAddress.ipAddress);
-	offer.flags = request->flags;
-	offer.giaddr = request->giaddr;
-	memcpy(offer.chaddr, request->chaddr, MAX_HADDR_SIZE);
-	offer.magicCookie = request->magicCookie;
+	offer.htype = request.htype;
+	offer.hlen = request.hlen;
+	offer.xid = request.xid;
+	offer.yiaddr = allocatedAddress.ipAddress;
+	offer.flags = request.flags;
+	offer.giaddr = request.giaddr;
+	memcpy(offer.chaddr, request.chaddr, MAX_HADDR_SIZE);
+	offer.magicCookie = request.magicCookie;
 
-	uint8_t* optionsPtr = packIpAddressLeaseTime(offer.options, allocatedAddress.leaseTime);
-	optionsPtr = packMessageType(optionsPtr, DHCPOFFER);
-	optionsPtr = packServerIdentifier(optionsPtr);
-	optionsPtr = packNetworkMask(optionsPtr, allocatedAddress.mask);
-	optionsPtr = packRouters(optionsPtr, allocatedAddress.routers);
-	optionsPtr = packDnsServers(optionsPtr, allocatedAddress.dnsServers);
-	*(optionsPtr++) = END_OPTION;
+	Packer packer(offer.options);
+	packer.pack(IP_ADDRESS_LEASE_TIME, allocatedAddress.leaseTime)
+		.pack(DHCP_MESSAGE_TYPE, (uint8_t)DHCPOFFER)
+		.pack(SERVER_IDENTIFIER, server.serverIp)
+		.pack(SUBNET_MASK, allocatedAddress.mask)
+		.pack(ROUTERS, allocatedAddress.routers)
+		.pack(DNS_OPTION, allocatedAddress.dnsServers)
+		.pack(END_OPTION);
 
+/*
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
 
 	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);

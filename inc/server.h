@@ -17,6 +17,8 @@ class Server {
 
 		void listen();
 
+		uint32_t serverIp;
+
 	private:
 		Config &config;
 		AddressesAllocator &addressesAllocator;
@@ -29,7 +31,6 @@ class Server {
 
 		char pcapErrbuf[PCAP_ERRBUF_SIZE];
 		pcap_t* pcapHandle;
-		uint32_t serverIp;
 
 		char lnetErrbuf[LIBNET_ERRBUF_SIZE];
 		libnet_t* lnetHandle;

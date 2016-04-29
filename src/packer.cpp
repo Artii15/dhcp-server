@@ -3,33 +3,43 @@
 
 using namespace std;
 
-uint8_t* Packer::pack(uint8_t* dst, uint8_t optionType, uint32_t value) {
-	*(dst++) = optionType;
-	*(dst++) = sizeof(value);
-	*(dst++) = value;
-
-	return dst;
+Packer::Packer(uint8_t* buffer) {
+	this->buffer = buffer;
 }
 
-uint8_t* Packer::pack(uint8_t* dst, uint8_t optionType, uint8_t value) {
-	*(dst++) = optionType;
-	*(dst++) = sizeof(value);
-	*(dst++) = value;
+Packer& Packer::pack(uint8_t optionType, uint32_t value) {
+	*(buffer++) = optionType;
+	*(buffer++) = sizeof(value);
+	*(buffer++) = value;
 
-	return dst;
+	return *this;
 }
 
-uint8_t* Packer::pack(uint8_t* dst, uint8_t optionType, const std::list<uint32_t>* value) {
+Packer& Packer::pack(uint8_t optionType, uint8_t value) {
+	*(buffer++) = optionType;
+	*(buffer++) = sizeof(value);
+	*(buffer++) = value;
+
+	return *this;
+}
+
+Packer& Packer::pack(uint8_t optionType, const std::list<uint32_t>* value) {
 	if(!value->empty()) {
-		*(dst++) = optionType;
-		*(dst++) = value->size() * sizeof(uint32_t);
+		*(buffer++) = optionType;
+		*(buffer++) = value->size() * sizeof(uint32_t);
 
 		for(list<uint32_t>::const_iterator it = value->begin(); it != value->end(); it++) {
 			uint32_t element = *it;
-			memcpy(dst, &element, sizeof(element));
-			dst += sizeof(element);
+			memcpy(buffer, &element, sizeof(element));
+			buffer += sizeof(element);
 		}
 	}
 
-	return dst;
+	return *this;
+}
+
+Packer& Packer::pack(uint8_t optionType) {
+	*(buffer++) = optionType;
+
+	return *this;
 }
