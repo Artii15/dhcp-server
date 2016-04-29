@@ -13,6 +13,7 @@ void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 }
 
 void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocatedAddress) {
+/*
 	DHCPMessage offer;
 	memset(&offer, 0, sizeof(offer));
 
@@ -24,7 +25,7 @@ void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocate
 	offer.flags = request->flags;
 	offer.giaddr = request->giaddr;
 	memcpy(offer.chaddr, request->chaddr, MAX_HADDR_SIZE);
-	offer.magicCookie = dhcpMsg->magicCookie;
+	offer.magicCookie = request->magicCookie;
 
 	uint8_t* optionsPtr = packIpAddressLeaseTime(offer.options, allocatedAddress.leaseTime);
 	optionsPtr = packMessageType(optionsPtr, DHCPOFFER);
@@ -47,4 +48,5 @@ void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocate
 
 	libnet_write(lnetHandle);
 	libnet_clear_packet(lnetHandle);
+	*/
 }
