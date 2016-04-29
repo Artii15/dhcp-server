@@ -33,20 +33,25 @@ AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddre
 
 
 AllocatedAddress AddressesAllocator::reallocateOldAddress(const Client& client) {
-	
 	return AllocatedAddress();
 }
 
 AllocatedAddress AddressesAllocator::allocateNewAddress(const Client& client) {
+	if(client.identificationMethod == BASED_ON_HARDWARE) {
+		allocate(client.networkAddress, client.hardwareAddress, addressesPools[client.networkAddress]->getNext());
+	}
+	else {
+		allocate(client.networkAddress, client.specialId, addressesPools[client.networkAddress]->getNext());
+	}
 	return AllocatedAddress();	
 }
 
-void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress& hardwareAddress, uint32_t ip) {
+void AddressesAllocator::allocate(const uint32_t networkAddress, const HardwareAddress& hardwareAddress, const uint32_t ip) {
 	AllocatedAddress& allocatedAddress = allocatedByHardware[networkAddress][hardwareAddress];
 	fillAddress(networkAddress, ip, allocatedAddress);
 }
 
-void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t ip) {
+void AddressesAllocator::allocate(const uint32_t networkAddress, const ClientSpecialId& specialId, const uint32_t ip) {
 	AllocatedAddress& allocatedAddress = allocatedBySpecialId[networkAddress][specialId];
 	fillAddress(networkAddress, ip, allocatedAddress);
 }

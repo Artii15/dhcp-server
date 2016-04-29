@@ -26,8 +26,8 @@ class AddressesAllocator {
 		std::map<uint32_t, std::map<HardwareAddress, AllocatedAddress> > allocatedByHardware;
 		std::map<uint32_t, std::map<ClientSpecialId, AllocatedAddress> > allocatedBySpecialId;
 
-		void allocate(uint32_t networkAddress, HardwareAddress& hardwareAddress, uint32_t address);
-		void allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t address);
+		void allocate(const uint32_t networkAddress, const HardwareAddress& hardwareAddress, const uint32_t address);
+		void allocate(const uint32_t networkAddress, const ClientSpecialId& specialId, const uint32_t address);
 		void fillAddress(uint32_t networkAddress, uint32_t ip, AllocatedAddress&);
 
 		uint32_t determineClientNetwork(uint32_t giaddr);
