@@ -1,5 +1,8 @@
 #include "../inc/discover_handler.h"
 #include "../inc/packer.h"
+#include "../inc/protocol.h"
+
+#include <linux/if_ether.h>
 
 DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToHandle, AddressesAllocator& addrAllocator, Server& serv)
 	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator), server(serv) {}
@@ -39,7 +42,7 @@ void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocate
 
 void DiscoverHandler::sendOffer(DHCPMessage& offer, DHCPMessage& request) {
 	uint32_t targetIpAddress;
-	uint8_t* targetHardwareAddress[6] = {0};
+	uint8_t targetHardwareAddress[6] = {0};
 	if(request.giaddr != 0) {
 		targetIpAddress = request.giaddr;
 	}
@@ -48,25 +51,23 @@ void DiscoverHandler::sendOffer(DHCPMessage& offer, DHCPMessage& request) {
 	}
 	else if(request.flags & BROADCAST_FLAG) {
 		targetIpAddress = 0xffffffff;
+		uint8_t broadcastAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+		memcpy(targetHardwareAddress, broadcastAddr, 6);
 	}
 	else {
 		targetIpAddress = offer.yiaddr;
 		memcpy(targetHardwareAddress, request.chaddr, 6);
 	}
 
-/*
-	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
+	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), server.lnetHandle, 0);
 
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, targetIpAddress, server.lnetHandle);
 
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, performBroadcast ? 0xffffffffffffffff : offer.yiaddr, lnetHandle);
-
-	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	if(!performBroadcast) {
-		memcpy(dstEthAddr, dhcpMsg->chaddr, 6);
+	uint8_t zeroAddr[6] = {0};
+	if(memcmp(zeroAddr, targetHardwareAddress, 6) != 0) {
+		libnet_autobuild_ethernet(targetHardwareAddress, ETH_P_IP, server.lnetHandle);
 	}
-	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
 
-	libnet_write(lnetHandle);
-	libnet_clear_packet(lnetHandle);
-*/
+	libnet_write(server.lnetHandle);
+	libnet_clear_packet(server.lnetHandle);
 }

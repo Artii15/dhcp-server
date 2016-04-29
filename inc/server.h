@@ -18,6 +18,7 @@ class Server {
 		void listen();
 
 		uint32_t serverIp;
+		libnet_t* lnetHandle;
 
 	private:
 		Config &config;
@@ -33,7 +34,6 @@ class Server {
 		pcap_t* pcapHandle;
 
 		char lnetErrbuf[LIBNET_ERRBUF_SIZE];
-		libnet_t* lnetHandle;
 
 		void setPacketsFilter();
 
