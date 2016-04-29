@@ -41,21 +41,22 @@ AllocatedAddress AddressesAllocator::allocateNewAddress(const Client& client) {
 	return AllocatedAddress();	
 }
 
-void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress& hardwareAddress, uint32_t address) {
-	const PoolDescriptor& poolDescriptor = addressesPools[networkAddress]->descriptor;
-
-	AllocatedAddress allocatedAddress;
-	allocatedAddress.ipAddress = address;
-	allocatedAddress.mask = poolDescriptor.networkMask;
-	allocatedAddress.dnsServers = poolDescriptor.dnsServers;
-	allocatedAddress.routers = poolDescriptor.routers;
-	allocatedAddress.leaseTime = poolDescriptor.leaseTime;
-	
-	allocatedByHardware[networkAddress][hardwareAddress] = allocatedAddress;
+void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress& hardwareAddress, uint32_t ip) {
+	AllocatedAddress& allocatedAddress = allocatedByHardware[networkAddress][hardwareAddress];
+	fillAddress(networkAddress, ip, allocatedAddress);
 }
 
 void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t address) {
 	allocatedBySpecialId[networkAddress][specialId] = AllocatedAddress();
+}
+
+void AddressesAllocator::fillAddress(uint32_t networkAddress, uint32_t ip, AllocatedAddress& allocatedAddress) {
+	const PoolDescriptor& poolDescriptor = addressesPools[networkAddress]->descriptor;
+	allocatedAddress.ipAddress = ip;
+	allocatedAddress.mask = poolDescriptor.networkMask;
+	allocatedAddress.dnsServers = poolDescriptor.dnsServers;
+	allocatedAddress.routers = poolDescriptor.routers;
+	allocatedAddress.leaseTime = poolDescriptor.leaseTime;
 }
 
 uint32_t AddressesAllocator::determineClientNetwork(uint32_t giaddr) {

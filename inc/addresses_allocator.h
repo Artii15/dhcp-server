@@ -28,6 +28,7 @@ class AddressesAllocator {
 
 		void allocate(uint32_t networkAddress, HardwareAddress& hardwareAddress, uint32_t address);
 		void allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t address);
+		void fillAddress(uint32_t networkAddress, uint32_t ip, AllocatedAddress&);
 
 		uint32_t determineClientNetwork(uint32_t giaddr);
 		uint32_t matchNetworkToAddress(uint32_t address);
