@@ -17,8 +17,7 @@ class AddressesAllocator {
 		~AddressesAllocator();
 
 		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t giaddr, uint32_t preferedAddress);
-		AllocatedAddress reallocateOldAddress(const Client& client);
-		AllocatedAddress& allocateNewAddress(const Client& client);
+		AllocatedAddress& allocateAddressFor(const Client& client);
 		bool hasClientAllocatedAddress(const Client&);
 	private:
 		Config& config;

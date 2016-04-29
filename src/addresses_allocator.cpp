@@ -32,11 +32,7 @@ AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddre
 }
 
 
-AllocatedAddress AddressesAllocator::reallocateOldAddress(const Client& client) {
-	return AllocatedAddress();
-}
-
-AllocatedAddress& AddressesAllocator::allocateNewAddress(const Client& client) {
+AllocatedAddress& AddressesAllocator::allocateAddressFor(const Client& client) {
 	if(client.identificationMethod == BASED_ON_HARDWARE) {
 		return allocate(client.networkAddress, client.hardwareAddress, addressesPools[client.networkAddress]->getNext());
 	}

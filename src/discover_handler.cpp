@@ -10,7 +10,7 @@ void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 }
 
 void DiscoverHandler::assignPreviouslyAssignedAddress() {
-	AllocatedAddress address = allocator.allocateNewAddress(client);
+	AllocatedAddress& address = allocator.allocateAddressFor(client);
 }
 
 void DiscoverHandler::assignFreshAddress() {
