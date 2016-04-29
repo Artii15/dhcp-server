@@ -2,6 +2,7 @@
 #include "../inc/dhcp_message.h"
 #include "../inc/protocol.h"
 #include "../inc/client.h"
+#include "../inc/discover_handler.h"
 
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -101,11 +102,11 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	}
 	client.networkAddress = ((Server*)server)->networkResolver->determineNetworkAddress(dhcpMsg->giaddr);
 
-
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
+	Server& srv = *((Server*)server);
 	switch(operationType) {
 		case(DHCPDISCOVER): {
-			((Server*)server)->handleDiscover(dhcpMsg, &options);
+			DiscoverHandler(srv.transactionsStorage, client, srv.addressesAllocator, srv).handle(*dhcpMsg, options);
 			break;	
 		}
 		case(DHCPREQUEST): {
@@ -113,53 +114,6 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 			break;	
 		}
 	}
-}
-
-void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
-	if(!transactionsStorage.transactionExists(dhcpMsg->xid)) {
-		HardwareAddress clientAddress(dhcpMsg->htype, dhcpMsg->chaddr);
-		AllocatedAddress allocatedAddress = addressesAllocator.allocate(clientAddress, ntohl(dhcpMsg->giaddr), ntohl(dhcpMsg->yiaddr));
-
-		transactionsStorage.createTransaction(dhcpMsg->xid, &allocatedAddress);
-		sendOffer(dhcpMsg, allocatedAddress);
-	}
-}
-
-void Server::sendOffer(struct DHCPMessage* dhcpMsg, const AllocatedAddress &allocatedAddress) {
-	DHCPMessage offer;
-	memset(&offer, 0, sizeof(offer));
-
-	offer.op = BOOTREPLY;
-	offer.htype = dhcpMsg->htype;
-	offer.hlen = dhcpMsg->hlen;
-	offer.xid = dhcpMsg->xid;
-	offer.yiaddr = htonl(allocatedAddress.ipAddress);
-	offer.flags = dhcpMsg->flags;
-	offer.giaddr = dhcpMsg->giaddr;
-	memcpy(offer.chaddr, dhcpMsg->chaddr, MAX_HADDR_SIZE);
-	offer.magicCookie = dhcpMsg->magicCookie;
-
-	uint8_t* optionsPtr = packIpAddressLeaseTime(offer.options, allocatedAddress.leaseTime);
-	optionsPtr = packMessageType(optionsPtr, DHCPOFFER);
-	optionsPtr = packServerIdentifier(optionsPtr);
-	optionsPtr = packNetworkMask(optionsPtr, allocatedAddress.mask);
-	optionsPtr = packRouters(optionsPtr, allocatedAddress.routers);
-	optionsPtr = packDnsServers(optionsPtr, allocatedAddress.dnsServers);
-	*(optionsPtr++) = END_OPTION;
-
-	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
-
-	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, performBroadcast ? 0xffffffffffffffff : offer.yiaddr, lnetHandle);
-
-	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	if(!performBroadcast) {
-		memcpy(dstEthAddr, dhcpMsg->chaddr, 6);
-	}
-	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
-
-	libnet_write(lnetHandle);
-	libnet_clear_packet(lnetHandle);
 }
 
 uint8_t* Server::packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime) {

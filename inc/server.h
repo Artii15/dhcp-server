@@ -37,8 +37,6 @@ class Server {
 
 		void setPacketsFilter();
 
-		void handleDiscover(struct DHCPMessage* dhcpMsg, Options* options);
-		void sendOffer(DHCPMessage* dhcpMsg, const AllocatedAddress &allocatedAddress);
 		uint8_t* packIpAddressLeaseTime(uint8_t* dst, uint32_t leaseTime);
 		uint8_t* packMessageType(uint8_t* dst, uint8_t messageType);
 		uint8_t* packServerIdentifier(uint8_t* dst);
