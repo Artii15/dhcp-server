@@ -55,8 +55,8 @@ void AddressesAllocator::fillAddress(uint32_t networkAddress, uint32_t ip, Alloc
 	const PoolDescriptor& poolDescriptor = addressesPools[networkAddress]->descriptor;
 	allocatedAddress.ipAddress = ip;
 	allocatedAddress.mask = poolDescriptor.networkMask;
-	allocatedAddress.dnsServers = poolDescriptor.dnsServers;
-	allocatedAddress.routers = poolDescriptor.routers;
+	allocatedAddress.dnsServers = &poolDescriptor.dnsServers;
+	allocatedAddress.routers = &poolDescriptor.routers;
 	allocatedAddress.leaseTime = poolDescriptor.leaseTime;
 }
 

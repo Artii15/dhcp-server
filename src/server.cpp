@@ -198,14 +198,14 @@ uint8_t* Server::packNetworkMask(uint8_t* dst, uint32_t mask) {
 	return dst + sizeof(mask);
 }
 
-uint8_t* Server::packRouters(uint8_t* dst, const list<uint32_t>& routers) {
-	if(!routers.empty()) {
+uint8_t* Server::packRouters(uint8_t* dst, const list<uint32_t>* routers) {
+	if(!routers->empty()) {
 		*(dst++) = ROUTERS;
 
-		uint32_t routersSizeInBytes = routers.size() * sizeof(uint32_t);
+		uint32_t routersSizeInBytes = routers->size() * sizeof(uint32_t);
 		*(dst++) = routersSizeInBytes;
 
-		for(list<uint32_t>::const_iterator routersIt = routers.begin(); routersIt != routers.end(); routersIt++) {
+		for(list<uint32_t>::const_iterator routersIt = routers->begin(); routersIt != routers->end(); routersIt++) {
 			uint32_t router = htonl(*routersIt);
 			memcpy(dst, &router, sizeof(router));
 			dst += sizeof(router);
@@ -215,14 +215,14 @@ uint8_t* Server::packRouters(uint8_t* dst, const list<uint32_t>& routers) {
 	return dst;
 }
 
-uint8_t* Server::packDnsServers(uint8_t* dst, const list<uint32_t>& servers) {
-	if(!servers.empty()) {
+uint8_t* Server::packDnsServers(uint8_t* dst, const list<uint32_t>* servers) {
+	if(!servers->empty()) {
 		*(dst++) = DNS_OPTION;
 
-		uint32_t serversSizeInBytes = servers.size() * sizeof(uint32_t);
+		uint32_t serversSizeInBytes = servers->size() * sizeof(uint32_t);
 		*(dst++) = serversSizeInBytes;
 
-		for(list<uint32_t>::const_iterator serversIt = servers.begin(); serversIt != servers.end(); serversIt++) {
+		for(list<uint32_t>::const_iterator serversIt = servers->begin(); serversIt != servers->end(); serversIt++) {
 			uint32_t server = htonl(*serversIt);
 			memcpy(dst, &server, sizeof(server));
 			dst += sizeof(server);
