@@ -8,6 +8,10 @@ void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 		AllocatedAddress& address = allocator.allocateAddressFor(client);
 
 		transactionsStorage.createTransaction(message.xid, &address);
-		//sendOffer(dhcpMsg, allocatedAddress);
+		sendOffer(message, address);
 	}
+}
+
+void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocatedAddress) {
+	
 }

@@ -16,6 +16,8 @@ class DiscoverHandler {
 		TransactionsStorage& transactionsStorage;
 		Client& client;
 		AddressesAllocator& allocator;
+
+		void sendOffer(DHCPMessage& request, AllocatedAddress& allocatedAddress);
 };
 
 #endif
