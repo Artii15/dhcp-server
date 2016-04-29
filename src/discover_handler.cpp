@@ -35,11 +35,29 @@ void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocate
 		.pack(ROUTERS, allocatedAddress.routers)
 		.pack(DNS_OPTION, allocatedAddress.dnsServers)
 		.pack(END_OPTION);
+}
+
+void DiscoverHandler::sendOffer(DHCPMessage& offer, DHCPMessage& request) {
+	uint32_t targetIpAddress;
+	uint8_t* targetHardwareAddress[6] = {0};
+	if(request.giaddr != 0) {
+		targetIpAddress = request.giaddr;
+	}
+	else if(request.giaddr == 0 && request.ciaddr != 0) {
+		targetIpAddress = request.ciaddr;
+	}
+	else if(request.flags & BROADCAST_FLAG) {
+		targetIpAddress = 0xffffffff;
+	}
+	else {
+		targetIpAddress = offer.yiaddr;
+		memcpy(targetHardwareAddress, request.chaddr, 6);
+	}
 
 /*
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(offer), 0, (uint8_t*)&offer, sizeof(offer), lnetHandle, 0);
 
-	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
+
 	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(offer), IPPROTO_UDP, performBroadcast ? 0xffffffffffffffff : offer.yiaddr, lnetHandle);
 
 	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
@@ -50,5 +68,5 @@ void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocate
 
 	libnet_write(lnetHandle);
 	libnet_clear_packet(lnetHandle);
-	*/
+*/
 }

@@ -20,6 +20,7 @@ class DiscoverHandler {
 		Server& server;
 
 		void sendOffer(DHCPMessage& request, AllocatedAddress& allocatedAddress);
+		void sendOffer(DHCPMessage& offer, DHCPMessage& request);
 };
 
 #endif
