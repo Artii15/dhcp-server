@@ -42,7 +42,16 @@ AllocatedAddress AddressesAllocator::allocateNewAddress(const Client& client) {
 }
 
 void AddressesAllocator::allocate(uint32_t networkAddress, HardwareAddress& hardwareAddress, uint32_t address) {
-	allocatedByHardware[networkAddress][hardwareAddress] = AllocatedAddress();
+	const PoolDescriptor& poolDescriptor = addressesPools[networkAddress]->descriptor;
+
+	AllocatedAddress allocatedAddress;
+	allocatedAddress.ipAddress = address;
+	allocatedAddress.mask = poolDescriptor.networkMask;
+	allocatedAddress.dnsServers = poolDescriptor.dnsServers;
+	allocatedAddress.routers = poolDescriptor.routers;
+	allocatedAddress.leaseTime = poolDescriptor.leaseTime;
+	
+	allocatedByHardware[networkAddress][hardwareAddress] = allocatedAddress;
 }
 
 void AddressesAllocator::allocate(uint32_t networkAddress, ClientSpecialId& specialId, uint32_t address) {
