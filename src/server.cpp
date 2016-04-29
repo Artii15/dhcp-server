@@ -79,7 +79,7 @@ void Server::listen() {
 	pcap_loop(pcapHandle, 0, &Server::dispatch, (u_char*)this);
 }
 
-void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_char *rawMessage) {
+void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_char *rawMessage) {
 	unsigned int dhcpMsgStartPos = sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
 	struct DHCPMessage* dhcpMsg = (struct DHCPMessage*)(rawMessage + dhcpMsgStartPos);
 	Options options(dhcpMsg->options, header->caplen - dhcpMsgStartPos);
@@ -100,17 +100,18 @@ void Server::dispatch(u_char *server, const struct pcap_pkthdr *header, const u_
 	else {
 		client.identificationMethod = BASED_ON_HARDWARE;
 	}
-	client.networkAddress = ((Server*)server)->networkResolver->determineNetworkAddress(dhcpMsg->giaddr);
+
+	Server& server = *((Server*)srv);
+	client.networkAddress = server.networkResolver->determineNetworkAddress(dhcpMsg->giaddr);
 
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
-	Server& srv = *((Server*)server);
 	switch(operationType) {
 		case(DHCPDISCOVER): {
-			DiscoverHandler(srv.transactionsStorage, client, srv.addressesAllocator, srv).handle(*dhcpMsg, options);
+			DiscoverHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options);
 			break;	
 		}
 		case(DHCPREQUEST): {
-			((Server*)server)->handleRequest(dhcpMsg, &options);
+			server.handleRequest(dhcpMsg, &options);
 			break;	
 		}
 	}
