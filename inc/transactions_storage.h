@@ -8,7 +8,7 @@
 class TransactionsStorage {
 	public:
 		TransactionsStorage(Config& config);
-		void storeTransaction(const Transaction&);
+		Transaction& createTransaction(uint32_t xid, AllocatedAddress*);
 		const Transaction& getTransaction(uint32_t id);
 		void removeTransaction(uint32_t id);
 		bool transactionExists(uint32_t id);

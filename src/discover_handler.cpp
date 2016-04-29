@@ -5,14 +5,7 @@ DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToH
 
 void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
 	if(!transactionsStorage.transactionExists(message.xid)) {
-		allocator.hasClientAllocatedAddress(client) ? assignPreviouslyAssignedAddress() : assignFreshAddress();
+		AllocatedAddress& address = allocator.allocateAddressFor(client);
+
 	}
-}
-
-void DiscoverHandler::assignPreviouslyAssignedAddress() {
-	AllocatedAddress& address = allocator.allocateAddressFor(client);
-}
-
-void DiscoverHandler::assignFreshAddress() {
-
 }

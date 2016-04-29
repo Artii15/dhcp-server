@@ -8,10 +8,10 @@ class Transaction {
 	public:
 		Transaction();
 		Transaction(const Transaction& copy);
-		Transaction(uint32_t id, const AllocatedAddress& allocatedAddress);
+		Transaction(uint32_t id, const AllocatedAddress* allocatedAddress);
 
 		uint32_t id;
-		AllocatedAddress allocatedAddress;
+		const AllocatedAddress* allocatedAddress;
 };
 
 #endif

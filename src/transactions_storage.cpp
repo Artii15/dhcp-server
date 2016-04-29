@@ -22,9 +22,13 @@ void deleteOldTransaction(union sigval data) {
 	delete taskData;
 }
 
-void TransactionsStorage::storeTransaction(const Transaction& transaction) {
-	transactions[transaction.id] = transaction;
+Transaction& TransactionsStorage::createTransaction(uint32_t xid, AllocatedAddress* allocatedAddress) {
+	Transaction& transaction = transactions[xid];
+	transaction.id = xid;
+	transaction.allocatedAddress = allocatedAddress;
 	scheduleCleanTask(transaction.id);
+
+	return transaction;
 }
 
 void TransactionsStorage::scheduleCleanTask(uint32_t transactionId) {

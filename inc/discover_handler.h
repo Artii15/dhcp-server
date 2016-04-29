@@ -16,9 +16,6 @@ class DiscoverHandler {
 		TransactionsStorage& transactionsStorage;
 		Client& client;
 		AddressesAllocator& allocator;
-
-		void assignPreviouslyAssignedAddress();
-		void assignFreshAddress();
 };
 
 #endif

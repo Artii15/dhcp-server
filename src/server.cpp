@@ -120,7 +120,7 @@ void Server::handleDiscover(struct DHCPMessage* dhcpMsg, Options* options) {
 		HardwareAddress clientAddress(dhcpMsg->htype, dhcpMsg->chaddr);
 		AllocatedAddress allocatedAddress = addressesAllocator.allocate(clientAddress, ntohl(dhcpMsg->giaddr), ntohl(dhcpMsg->yiaddr));
 
-		transactionsStorage.storeTransaction(Transaction(dhcpMsg->xid, allocatedAddress));
+		transactionsStorage.createTransaction(dhcpMsg->xid, &allocatedAddress);
 		sendOffer(dhcpMsg, allocatedAddress);
 	}
 }
@@ -234,7 +234,7 @@ uint8_t* Server::packDnsServers(uint8_t* dst, const list<uint32_t>* servers) {
 
 void Server::handleRequest(struct DHCPMessage* dhcpMsg, Options* options) {
 	if(transactionsStorage.transactionExists(dhcpMsg->xid)) {
-		sendAck(dhcpMsg, transactionsStorage.getTransaction(dhcpMsg->xid).allocatedAddress);
+		sendAck(dhcpMsg, *transactionsStorage.getTransaction(dhcpMsg->xid).allocatedAddress);
 	}
 }
 
