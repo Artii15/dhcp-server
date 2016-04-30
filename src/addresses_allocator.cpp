@@ -80,6 +80,23 @@ bool AddressesAllocator::hasClientAllocatedAddress(const Client& client) {
 }
 
 void AddressesAllocator::freeClientAddress(const Client& client) {
-	(client.identificationMethod == BASED_ON_HARDWARE) ? allocatedByHardware[client.networkAddress].erase(client.hardwareAddress) 
-		: allocatedBySpecialId[client.networkAddress].erase(client.specialId);
+	if(hasClientAllocatedAddress(client)) {
+		uint32_t freedIpAddress = (client.identificationMethod == BASED_ON_HARDWARE) ? free(client.networkAddress, client.hardwareAddress) 
+			: free(client.networkAddress, client.specialId);
+		addressesPools[client.networkAddress]->abandon(freedIpAddress);
+	}
+}
+
+uint32_t AddressesAllocator::free(uint32_t networkAddress, const HardwareAddress& hardwareAddress) {
+	uint32_t freedAddress = allocatedByHardware[networkAddress][hardwareAddress].ipAddress;
+	allocatedByHardware[networkAddress].erase(hardwareAddress);
+
+	return freedAddress;
+}
+
+uint32_t AddressesAllocator::free(uint32_t networkAddress, const ClientSpecialId& specialId) {
+	uint32_t freedAddress = allocatedBySpecialId[networkAddress][specialId].ipAddress;
+	allocatedBySpecialId[networkAddress].erase(specialId);
+
+	return freedAddress;
 }

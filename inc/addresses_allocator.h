@@ -32,6 +32,9 @@ class AddressesAllocator {
 
 		uint32_t determineClientNetwork(uint32_t giaddr);
 		uint32_t matchNetworkToAddress(uint32_t address);
+
+		uint32_t free(uint32_t networkAddress, const HardwareAddress&);
+		uint32_t free(uint32_t networkAddress, const ClientSpecialId&);
 };
 
 #endif
