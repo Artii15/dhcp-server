@@ -11,7 +11,7 @@
 class DiscoverHandler {
 	public:
 		DiscoverHandler(TransactionsStorage&, Client&, AddressesAllocator&, Server&);
-		void handle(struct DHCPMessage&, Options&);
+		void handle(struct DHCPMessage&, Options&, uint32_t dstAddr);
 
 	private:
 		TransactionsStorage& transactionsStorage;

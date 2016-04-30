@@ -12,7 +12,7 @@ enum ClientState { SELECTING, INIT_REBOOT, RENEWING, REBINDING, UNKNOWN };
 class RequestHandler {
 	public:
 		RequestHandler(TransactionsStorage&, Client&, AddressesAllocator&, Server&);
-		void handle(struct DHCPMessage&, Options&);
+		void handle(struct DHCPMessage&, Options&, uint32_t dstAddr);
 
 	private:
 		TransactionsStorage& transactionsStorage;

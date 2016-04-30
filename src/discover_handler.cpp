@@ -5,7 +5,7 @@
 DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToHandle, AddressesAllocator& addrAllocator, Server& serv)
 	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator), server(serv) {}
 
-void DiscoverHandler::handle(struct DHCPMessage& message, Options& options) {
+void DiscoverHandler::handle(struct DHCPMessage& message, Options& options, uint32_t dstAddr) {
 	if(!transactionsStorage.transactionExists(message.xid)) {
 		AllocatedAddress& address = allocator.allocateAddressFor(client);
 

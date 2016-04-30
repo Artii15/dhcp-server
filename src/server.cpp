@@ -107,11 +107,12 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 	client.networkAddress = server.networkResolver->determineNetworkAddress(dhcpMsg->giaddr);
 
 	struct iphdr* ipHeader = (struct iphdr*)(rawMessage + sizeof(struct ethhdr));
+	uint32_t dstAddr = ntohl(ipHeader->daddr);
 
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
 	switch(operationType) {
 		case(DHCPDISCOVER): {
-			DiscoverHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options);
+			DiscoverHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
 			break;	
 		}
 		case(DHCPREQUEST): {

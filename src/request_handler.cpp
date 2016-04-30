@@ -5,7 +5,7 @@ RequestHandler::RequestHandler(TransactionsStorage& storage, Client& clientToHan
 	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator), server(serv) {}
 
 
-void RequestHandler::handle(struct DHCPMessage& request, Options& options) {
+void RequestHandler::handle(struct DHCPMessage& request, Options& options, uint32_t dstAddr) {
 	ClientState clientState = determineClientState(request, options);
 
 	switch(clientState) {
