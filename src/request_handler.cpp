@@ -5,8 +5,8 @@ RequestHandler::RequestHandler(TransactionsStorage& storage, Client& clientToHan
 
 
 void RequestHandler::handle(struct DHCPMessage& request, Options& options) {
-	if(*options.get(SERVER_IDENTIFIER).value == server.serverIp) {
+	if(*options.get(SERVER_IDENTIFIER).value != server.serverIp) {
 		allocator.freeClientAddress(client);
-		// Remove transaction here
+		transactionsStorage.removeTransaction(request.xid);
 	}
 }

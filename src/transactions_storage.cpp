@@ -1,25 +1,14 @@
 #include "../inc/transactions_storage.h"
-#include <signal.h>
-#include <time.h>
 #include <string.h>
 #include <stdexcept>
 
 using namespace std;
 
-struct CleanTaskData {
-	uint32_t transactionId;
-	unordered_map<uint32_t, Transaction>* transactions;
-	timer_t timer;
-};
-
 TransactionsStorage::TransactionsStorage(Config& configuration): config(configuration) {}
 
 void deleteOldTransaction(union sigval data) {
 	CleanTaskData* taskData = (CleanTaskData*)data.sival_ptr;
-	taskData->transactions->erase(taskData->transactionId);
-
-	timer_delete(taskData->timer);
-	delete taskData;
+	taskData->storage->removeTransaction(taskData->transactionId);
 }
 
 Transaction& TransactionsStorage::createTransaction(uint32_t xid, AllocatedAddress* allocatedAddress) {
@@ -32,18 +21,18 @@ Transaction& TransactionsStorage::createTransaction(uint32_t xid, AllocatedAddre
 }
 
 void TransactionsStorage::scheduleCleanTask(uint32_t transactionId) {
-	CleanTaskData* taskData = new CleanTaskData();
-	taskData->transactionId = transactionId;
-	taskData->transactions = &transactions;
+	CleanTaskData& taskData = cleanTasksData[transactionId];
+	taskData.transactionId = transactionId;
+	taskData.storage = this;
 
 	struct sigevent onTick;
 	memset(&onTick, 0, sizeof(onTick));
 	onTick.sigev_notify = SIGEV_THREAD;
 	onTick.sigev_signo = 0;
-	onTick.sigev_value.sival_ptr = taskData;
+	onTick.sigev_value.sival_ptr = &taskData;
 	onTick.sigev_notify_function = deleteOldTransaction;
 
-	if(timer_create(CLOCK_MONOTONIC, &onTick, &taskData->timer) < 0) {
+	if(timer_create(CLOCK_MONOTONIC, &onTick, &taskData.timer) < 0) {
 		throw runtime_error("Could not create clock for transaction delete task");
 	}
 
@@ -54,7 +43,7 @@ void TransactionsStorage::scheduleCleanTask(uint32_t transactionId) {
 	struct itimerspec oldValue;
 	memset(&oldValue, 0, sizeof(oldValue));
 
-	if(timer_settime(taskData->timer, 0, &newValue, &oldValue) < 0) {
+	if(timer_settime(taskData.timer, 0, &newValue, &oldValue) < 0) {
 		throw runtime_error("Could not set timer for transaction delete task");
 	}
 }
@@ -64,7 +53,11 @@ const Transaction& TransactionsStorage::getTransaction(uint32_t id) {
 }
 
 void TransactionsStorage::removeTransaction(uint32_t id) {
-	transactions.erase(id);
+	if(transactionExists(id)) {
+		transactions.erase(id);
+		timer_delete(cleanTasksData[id].timer);
+		cleanTasksData.erase(id);
+	}
 }
 
 bool TransactionsStorage::transactionExists(uint32_t id) {

@@ -4,6 +4,16 @@
 #include "transaction.h"
 #include "config.h"
 #include <unordered_map>
+#include <signal.h>
+#include <time.h>
+
+class TransactionsStorage;
+
+struct CleanTaskData {
+	uint32_t transactionId;
+	timer_t timer;
+	TransactionsStorage* storage;
+};
 
 class TransactionsStorage {
 	public:
@@ -16,6 +26,7 @@ class TransactionsStorage {
 	private:
 		Config& config;
 		std::unordered_map<uint32_t, Transaction> transactions;
+		std::unordered_map<uint32_t, CleanTaskData> cleanTasksData;
 
 		void scheduleCleanTask(uint32_t transactionId);
 };
