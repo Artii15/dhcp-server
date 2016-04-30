@@ -5,5 +5,5 @@ DeclineHandler::DeclineHandler(TransactionsStorage& storage, Client& clientToHan
 
 
 void DeclineHandler::handle(struct DHCPMessage&, Options&, uint32_t dstAddr) {
-
+	allocator.freeClientAddressButLeaveUnavailable(client);
 }

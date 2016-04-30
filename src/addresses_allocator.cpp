@@ -109,3 +109,8 @@ AllocatedAddress& AddressesAllocator::getAllocatedAddress(const Client& client) 
 		return allocatedBySpecialId[client.networkAddress][client.specialId];
 	}
 }
+
+
+void AddressesAllocator::freeClientAddressButLeaveUnavailable(const Client& client) {
+
+}
