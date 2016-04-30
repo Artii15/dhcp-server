@@ -69,8 +69,14 @@ bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& opti
 void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options& options) {
 	if(allocator.hasClientAllocatedAddress(client)) {
 		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
-		respond(request, allocatedAddress, 
-			(allocatedAddress.ipAddress == (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value) ? DHCPACK : DHCPNAK);
+		if(allocatedAddress.ipAddress == (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value) {
+			respond(request, allocatedAddress, DHCPACK);
+		}
+		else {
+			AllocatedAddress invalidAddress = allocatedAddress;
+			invalidAddress.ipAddress = (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value;
+			respond(request, invalidAddress, DHCPNAK);
+		}
 	}
 }
 
