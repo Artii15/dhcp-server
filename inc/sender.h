@@ -8,10 +8,11 @@
 class Sender {
 	public:
 		Sender(libnet_t* lnetHandle);
-		void send(DHCPMessage request, const AllocatedAddress&);
+		void send(DHCPMessage&, const AllocatedAddress&, unsigned messageType);
 
 	private:
 		libnet_t* lnetHandle;
+		void fillBroadcastAddress(uint8_t* buffer);
 };
 
 #endif

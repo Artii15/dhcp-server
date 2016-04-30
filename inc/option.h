@@ -7,6 +7,7 @@
 #define DHCPOFFER 2
 #define DHCPREQUEST 3
 #define DHCPACK 5
+#define DHCPNAK 6
 
 #define SUBNET_MASK 1
 #define ROUTERS 3
