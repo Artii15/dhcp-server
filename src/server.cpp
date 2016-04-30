@@ -120,5 +120,9 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 			RequestHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
 			break;	
 		}
+		case(DHCPDECLINE): {
+			RequestHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
+			break;	
+		}
 	}
 }
