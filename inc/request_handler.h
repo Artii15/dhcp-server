@@ -26,6 +26,7 @@ class RequestHandler {
 		bool isRequestedAddressValid(DHCPMessage&, Options&, const AllocatedAddress&);
 
 		void handleInitRebootState(DHCPMessage&, Options&);
+		void handleRenewingState(DHCPMessage&, Options&);
 
 		void respond(DHCPMessage&, const AllocatedAddress&, uint8_t messageType);
 };

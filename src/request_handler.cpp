@@ -80,6 +80,14 @@ void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options&
 	}
 }
 
+void RequestHandler::handleRenewingState(DHCPMessage& request, Options& options) {
+	if(allocator.hasClientAllocatedAddress(client)) {
+		//TODO: Refresh lease time here
+		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
+		respond(request, allocatedAddress, DHCPACK);
+	}
+}
+
 void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& allocatedAddress, uint8_t messageType) {
 	DHCPMessage response;
 	memset(&response, 0, sizeof(response));
