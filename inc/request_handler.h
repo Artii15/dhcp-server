@@ -18,6 +18,8 @@ class RequestHandler {
 		Client& client;
 		AddressesAllocator& allocator;
 		Server& server;
+
+		enum ClientState { SELECTING, INIT_REBOOT, RENEWING, REBINDING };
 };
 
 #endif
