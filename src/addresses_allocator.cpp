@@ -112,5 +112,7 @@ AllocatedAddress& AddressesAllocator::getAllocatedAddress(const Client& client) 
 
 
 void AddressesAllocator::freeClientAddressButLeaveUnavailable(const Client& client) {
-
+	if(hasClientAllocatedAddress(client)) {
+		(client.identificationMethod == BASED_ON_HARDWARE) ? free(client.networkAddress, client.hardwareAddress) : free(client.networkAddress, client.specialId);
+	}
 }
