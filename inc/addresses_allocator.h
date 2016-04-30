@@ -16,9 +16,10 @@ class AddressesAllocator {
 		AddressesAllocator(Config& config);
 		~AddressesAllocator();
 
-		AllocatedAddress allocate(const HardwareAddress& clientAddress, uint32_t giaddr, uint32_t preferedAddress);
 		AllocatedAddress& allocateAddressFor(const Client& client);
 		bool hasClientAllocatedAddress(const Client&);
+		void freeClientAddress(const Client& client);
+
 	private:
 		Config& config;
 		std::unordered_map<uint32_t, AddressesPool*> addressesPools;

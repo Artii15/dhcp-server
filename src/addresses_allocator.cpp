@@ -19,19 +19,6 @@ AddressesAllocator::~AddressesAllocator() {
 	}
 }
 
-// TODO: Remove this method later
-AllocatedAddress AddressesAllocator::allocate(const HardwareAddress& clientAddress, uint32_t giaddr, uint32_t preferedAddress) {
-	//uint32_t clientNetwork = determineClientNetwork(giaddr);
-	//AddressesPool* pool = addressesPools[clientNetwork];
-
-	//AllocatedAddress allocatedAddress = pool->getNext();
-	//allocatedByHardware[1][clientAddress] = allocatedAddress;
-
-	//return allocatedAddress;
-	return AllocatedAddress();
-}
-
-
 AllocatedAddress& AddressesAllocator::allocateAddressFor(const Client& client) {
 	if(client.identificationMethod == BASED_ON_HARDWARE) {
 		return allocate(client.networkAddress, client.hardwareAddress, addressesPools[client.networkAddress]->getNext());
@@ -90,4 +77,9 @@ bool AddressesAllocator::hasClientAllocatedAddress(const Client& client) {
 		return allocatedBySpecialId.find(client.networkAddress) != allocatedBySpecialId.end() 
 				&& allocatedBySpecialId[client.networkAddress].find(client.specialId) != allocatedBySpecialId[client.networkAddress].end();
 	}
+}
+
+void AddressesAllocator::freeClientAddress(const Client& client) {
+	(client.identificationMethod == BASED_ON_HARDWARE) ? allocatedByHardware[client.networkAddress].erase(client.hardwareAddress) 
+		: allocatedBySpecialId[client.networkAddress].erase(client.specialId);
 }
