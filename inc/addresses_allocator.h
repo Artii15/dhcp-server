@@ -38,6 +38,9 @@ class AddressesAllocator {
 
 		uint32_t free(uint32_t networkAddress, const HardwareAddress&);
 		uint32_t free(uint32_t networkAddress, const ClientSpecialId&);
+
+		uint32_t findNextAddr(uint32_t network);
+		uint32_t reuseOutdatedAddress(uint32_t network);
 };
 
 #endif

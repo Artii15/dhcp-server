@@ -20,12 +20,27 @@ AddressesAllocator::~AddressesAllocator() {
 }
 
 AllocatedAddress& AddressesAllocator::allocateAddressFor(const Client& client) {
+	uint32_t nextAddress = findNextAddr(client.networkAddress);
+
 	if(client.identificationMethod == BASED_ON_HARDWARE) {
-		return allocate(client.networkAddress, client.hardwareAddress, addressesPools[client.networkAddress]->getNext());
+		return allocate(client.networkAddress, client.hardwareAddress, nextAddress);
 	}
 	else {
-		return allocate(client.networkAddress, client.specialId, addressesPools[client.networkAddress]->getNext());
+		return allocate(client.networkAddress, client.specialId, nextAddress);
 	}
+}
+
+uint32_t AddressesAllocator::findNextAddr(uint32_t network) {
+	try {
+		return addressesPools[network]->getNext();
+	}
+	catch(runtime_error& e) {
+		return reuseOutdatedAddress(network);
+	}
+}
+
+uint32_t AddressesAllocator::reuseOutdatedAddress(uint32_t network) {
+	return 0;
 }
 
 AllocatedAddress& AddressesAllocator::allocate(const uint32_t networkAddress, const HardwareAddress& hardwareAddress, const uint32_t ip) {
