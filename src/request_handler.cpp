@@ -52,10 +52,10 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 	else if(transactionsStorage.transactionExists(request.xid)) {
 		const AllocatedAddress& allocatedAddress = *transactionsStorage.getTransaction(request.xid).allocatedAddress;
 		if(isRequestedAddressValid(request, options, allocatedAddress)) {
-			sendAck(request, allocatedAddress);
+			respond(request, allocatedAddress, DHCPACK);
 		}
 		else {
-			sendNak(request, options);
+			respond(request, allocatedAddress, DHCPNAK);
 		}
 	}
 }
@@ -65,7 +65,7 @@ bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& opti
 		&& (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == allocatedAddress.ipAddress;
 }
 
-void RequestHandler::sendAck(DHCPMessage& request, const AllocatedAddress& allocatedAddress) {
+void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& allocatedAddress, uint8_t messageType) {
 	DHCPMessage ack;
 	memset(&ack, 0, sizeof(ack));
 
@@ -82,7 +82,7 @@ void RequestHandler::sendAck(DHCPMessage& request, const AllocatedAddress& alloc
 
 	Packer packer(ack.options);
 	packer.pack(IP_ADDRESS_LEASE_TIME, allocatedAddress.leaseTime)
-		.pack(DHCP_MESSAGE_TYPE, (uint8_t)DHCPOFFER)
+		.pack(DHCP_MESSAGE_TYPE, messageType)
 		.pack(SERVER_IDENTIFIER, server.serverIp)
 		.pack(SUBNET_MASK, allocatedAddress.mask)
 		.pack(ROUTERS, allocatedAddress.routers)
@@ -90,8 +90,4 @@ void RequestHandler::sendAck(DHCPMessage& request, const AllocatedAddress& alloc
 		.pack(END_OPTION);
 	
 	server.sender->send(ack, allocatedAddress, DHCPACK);
-}
-
-void RequestHandler::sendNak(DHCPMessage&, Options&) {
-
 }

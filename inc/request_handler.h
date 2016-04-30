@@ -24,8 +24,7 @@ class RequestHandler {
 
 		void handleSelectingState(DHCPMessage&, Options&);
 		bool isRequestedAddressValid(DHCPMessage&, Options&, const AllocatedAddress&);
-		void sendAck(DHCPMessage&, const AllocatedAddress&);
-		void sendNak(DHCPMessage&, Options&);
+		void respond(DHCPMessage&, const AllocatedAddress&, uint8_t messageType);
 };
 
 #endif
