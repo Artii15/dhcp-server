@@ -14,8 +14,12 @@ Sender::Sender(libnet_t* lnetHandle) {
 void Sender::send(DHCPMessage& response, const AllocatedAddress&, unsigned messageType) {
 	uint32_t targetIpAddress = 0;
 	uint8_t targetHardwareAddress[BROADCAST_ADDR_LEN] = {0};
+
 	if(response.giaddr != 0) {
 		targetIpAddress = response.giaddr;
+		if(messageType == DHCPNAK) {
+			response.flags |= BROADCAST_FLAG;
+		}
 	}
 	else if(messageType == DHCPNAK) {
 		targetIpAddress = IP_BROADCAST_ADDR;
