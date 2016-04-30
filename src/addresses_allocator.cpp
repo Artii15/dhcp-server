@@ -40,7 +40,22 @@ uint32_t AddressesAllocator::findNextAddr(uint32_t network) {
 }
 
 uint32_t AddressesAllocator::reuseOutdatedAddress(uint32_t network) {
-	return 0;
+	uint32_t candidateAddress = 0;
+	map<HardwareAddress, AllocatedAddress>& inNetwork = allocatedByHardware[network];
+	for(map<HardwareAddress, AllocatedAddress>::const_iterator it = inNetwork.begin(); it != inNetwork.end(); ++it) {
+		const AllocatedAddress& allocatedAddress = it->second;
+		if(time(NULL) - allocatedAddress.allocationTime > allocatedAddress.leaseTime) {
+			candidateAddress = allocatedAddress.ipAddress;
+			inNetwork.erase(it);
+		}
+	}
+
+	return candidateAddress;
+
+/*
+		std::map<uint32_t, std::map<HardwareAddress, AllocatedAddress> > allocatedByHardware;
+		std::map<uint32_t, std::map<ClientSpecialId, AllocatedAddress> > allocatedBySpecialId;
+*/
 }
 
 AllocatedAddress& AddressesAllocator::allocate(const uint32_t networkAddress, const HardwareAddress& hardwareAddress, const uint32_t ip) {
