@@ -67,6 +67,9 @@ bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& opti
 }
 
 void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options& options) {
+	if(allocator.hasClientAllocatedAddress(client)) {
+		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
+	}
 }
 
 void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& allocatedAddress, uint8_t messageType) {

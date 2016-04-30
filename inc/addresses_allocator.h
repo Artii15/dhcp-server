@@ -19,6 +19,7 @@ class AddressesAllocator {
 		AllocatedAddress& allocateAddressFor(const Client& client);
 		bool hasClientAllocatedAddress(const Client&);
 		void freeClientAddress(const Client& client);
+		AllocatedAddress& getAllocatedAddress(const Client& client);
 
 	private:
 		Config& config;

@@ -100,3 +100,12 @@ uint32_t AddressesAllocator::free(uint32_t networkAddress, const ClientSpecialId
 
 	return freedAddress;
 }
+
+AllocatedAddress& AddressesAllocator::getAllocatedAddress(const Client& client) {
+	if(client.identificationMethod == BASED_ON_HARDWARE) {
+		return allocatedByHardware[client.networkAddress][client.hardwareAddress];
+	}
+	else {
+		return allocatedBySpecialId[client.networkAddress][client.specialId];
+	}
+}
