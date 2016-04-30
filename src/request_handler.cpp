@@ -6,7 +6,7 @@ RequestHandler::RequestHandler(TransactionsStorage& storage, Client& clientToHan
 
 
 void RequestHandler::handle(struct DHCPMessage& request, Options& options, uint32_t dstAddr) {
-	ClientState clientState = determineClientState(request, options);
+	ClientState clientState = determineClientState(request, options, dstAddr);
 
 	switch(clientState) {
 		case SELECTING:
@@ -27,7 +27,7 @@ void RequestHandler::handle(struct DHCPMessage& request, Options& options, uint3
 	transactionsStorage.removeTransaction(request.xid);
 }
 
-ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Options& options) {
+ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Options& options, uint32_t dstAddr) {
 	if(options.exists(SERVER_IDENTIFIER) && (uint32_t)*options.get(SERVER_IDENTIFIER).value != 0
 		&& request.ciaddr == 0 
 		&& options.exists(REQUESTED_IP_ADDRESS) && (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value != 0) {
@@ -40,13 +40,13 @@ ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Op
 	}
 	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) 
 			&& request.ciaddr != 0
-			// TODO: dst address test 
+			&& dstAddr != IP_BROADCAST_ADDR
 			&& (!options.exists(REQUESTED_IP_ADDRESS) || (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == 0)) {
 		return RENEWING;
 	}
 	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) 
 			&& request.ciaddr != 0
-			// TODO: dst address test 
+			&& dstAddr == IP_BROADCAST_ADDR
 			&& (!options.exists(REQUESTED_IP_ADDRESS) || (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == 0)) {
 		return REBINDING;
 	}

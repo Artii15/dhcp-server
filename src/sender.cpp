@@ -4,7 +4,6 @@
 
 #include <linux/if_ether.h>
 
-#define IP_BROADCAST_ADDR 0xffffffff
 #define BROADCAST_ADDR_LEN 6
 
 Sender::Sender(libnet_t* lnetHandle) {

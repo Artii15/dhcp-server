@@ -20,7 +20,7 @@ class RequestHandler {
 		AddressesAllocator& allocator;
 		Server& server;
 
-		ClientState determineClientState(struct DHCPMessage&, Options&);
+		ClientState determineClientState(struct DHCPMessage&, Options&, uint32_t dstAddr);
 
 		void handleSelectingState(DHCPMessage&, Options&);
 		bool isRequestedAddressValid(DHCPMessage&, Options&, const AllocatedAddress&);
