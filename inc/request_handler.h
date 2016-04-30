@@ -8,6 +8,7 @@
 #include "dhcp_message.h"
 #include "options.h"
 
+enum ClientState { SELECTING, INIT_REBOOT, RENEWING, REBINDING, UNKNOWN };
 class RequestHandler {
 	public:
 		RequestHandler(TransactionsStorage&, Client&, AddressesAllocator&, Server&);
@@ -19,7 +20,9 @@ class RequestHandler {
 		AddressesAllocator& allocator;
 		Server& server;
 
-		enum ClientState { SELECTING, INIT_REBOOT, RENEWING, REBINDING };
+		ClientState determineClientState(struct DHCPMessage&, Options&);
+
+		void handleSelectingState(struct DHCPMessage&, Options&);
 };
 
 #endif
