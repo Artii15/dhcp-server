@@ -13,6 +13,7 @@ void RequestHandler::handle(struct DHCPMessage& request, Options& options) {
 			handleSelectingState(request, options);
 			break;
 		case INIT_REBOOT:
+			handleInitRebootState(request, options);
 			break;
 		case RENEWING:
 			break;
@@ -63,6 +64,9 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& options, const AllocatedAddress& allocatedAddress) {
 	return options.exists(REQUESTED_IP_ADDRESS) 
 		&& (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == allocatedAddress.ipAddress;
+}
+
+void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options& options) {
 }
 
 void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& allocatedAddress, uint8_t messageType) {
