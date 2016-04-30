@@ -26,15 +26,15 @@ void RequestHandler::handle(struct DHCPMessage& request, Options& options) {
 }
 
 ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Options& options) {
-	if(options.exists(SERVER_IDENTIFIER) && request.ciaddr == 0 && request.yiaddr != 0) {
+	if(options.exists(SERVER_IDENTIFIER) && request.ciaddr == 0 && options.exists(REQUESTED_IP_ADDRESS) && (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value != 0) {
 		return SELECTING;
 	}
-	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0)
-			&& request.yiaddr != 0 && request.ciaddr == 0) {
+	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) && request.ciaddr == 0
+			&& options.exists(REQUESTED_IP_ADDRESS) && (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value != 0) {
 		return INIT_REBOOT;
 	}
-	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value) 
-			&& request.yiaddr == 0 && request.ciaddr != 0) {
+	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value) && request.ciaddr != 0
+			&& (!options.exists(REQUESTED_IP_ADDRESS) || (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == 0)) {
 		return RENEWING;
 	}
 	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value) 
@@ -87,6 +87,8 @@ void RequestHandler::handleRenewingState(DHCPMessage& request, Options& options)
 		respond(request, allocatedAddress, DHCPACK);
 	}
 }
+
+
 
 void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& allocatedAddress, uint8_t messageType) {
 	DHCPMessage response;
