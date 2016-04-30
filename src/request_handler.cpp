@@ -49,8 +49,9 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 		allocator.freeClientAddress(client);
 	}
 	else if(transactionsStorage.transactionExists(request.xid)) {
-		if(isRequestedAddressValid(request, options)) {
-			sendAck(request, options);
+		const AllocatedAddress& allocatedAddress = *transactionsStorage.getTransaction(request.xid).allocatedAddress;
+		if(isRequestedAddressValid(request, options, allocatedAddress)) {
+			sendAck(request, allocatedAddress);
 		}
 		else {
 			sendNak(request, options);
@@ -58,13 +59,48 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 	}
 }
 
-bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& options) {
+bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& options, const AllocatedAddress& allocatedAddress) {
 	return options.exists(REQUESTED_IP_ADDRESS) 
-		&& (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == transactionsStorage.getTransaction(request.xid).allocatedAddress->ipAddress;
+		&& (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == allocatedAddress.ipAddress;
 }
 
-void RequestHandler::sendAck(DHCPMessage&, Options&) {
+void RequestHandler::sendAck(DHCPMessage& request, const AllocatedAddress& allocatedAddress) {
+/*
+	DHCPMessage ack;
+	memset(&ack, 0, sizeof(ack));
 
+	ack.op = BOOTREPLY;
+	ack.htype = request.htype;
+	ack.hlen = request.hlen;
+	ack.xid = request.xid;
+	ack.yiaddr = allocatedAddress.ipAddress;
+	ack.flags = dhcpMsg->flags;
+	ack.giaddr = dhcpMsg->giaddr;
+	memcpy(ack.chaddr, dhcpMsg->chaddr, MAX_HADDR_SIZE);
+	ack.magicCookie = dhcpMsg->magicCookie;
+
+	uint8_t* optionsPtr = packIpAddressLeaseTime(ack.options, allocatedAddress.leaseTime);
+	optionsPtr = packMessageType(optionsPtr, DHCPACK);
+	optionsPtr = packServerIdentifier(optionsPtr);
+	optionsPtr = packNetworkMask(optionsPtr, allocatedAddress.mask);
+	optionsPtr = packRouters(optionsPtr, allocatedAddress.routers);
+	optionsPtr = packDnsServers(optionsPtr, allocatedAddress.dnsServers);
+	*(optionsPtr++) = END_OPTION;
+
+	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(ack), 0, (uint8_t*)&ack, sizeof(ack), lnetHandle, 0);
+
+	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(ack), IPPROTO_UDP, performBroadcast ? 0xffffffffffffffff : ack.yiaddr, lnetHandle);
+
+	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+	if(!performBroadcast) {
+		memcpy(dstEthAddr, dhcpMsg->chaddr, 6);
+	}
+	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
+
+	libnet_write(lnetHandle);
+	libnet_clear_packet(lnetHandle);
+	*/
 }
 
 void RequestHandler::sendNak(DHCPMessage&, Options&) {

@@ -23,8 +23,8 @@ class RequestHandler {
 		ClientState determineClientState(struct DHCPMessage&, Options&);
 
 		void handleSelectingState(DHCPMessage&, Options&);
-		bool isRequestedAddressValid(DHCPMessage&, Options&);
-		void sendAck(DHCPMessage&, Options&);
+		bool isRequestedAddressValid(DHCPMessage&, Options&, const AllocatedAddress&);
+		void sendAck(DHCPMessage&, const AllocatedAddress&);
 		void sendNak(DHCPMessage&, Options&);
 };
 
