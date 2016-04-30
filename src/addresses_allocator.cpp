@@ -41,21 +41,35 @@ uint32_t AddressesAllocator::findNextAddr(uint32_t network) {
 
 uint32_t AddressesAllocator::reuseOutdatedAddress(uint32_t network) {
 	uint32_t candidateAddress = 0;
-	map<HardwareAddress, AllocatedAddress>& inNetwork = allocatedByHardware[network];
-	for(map<HardwareAddress, AllocatedAddress>::const_iterator it = inNetwork.begin(); it != inNetwork.end(); ++it) {
+
+	map<HardwareAddress, AllocatedAddress>& inNetworkByHardware = allocatedByHardware[network];
+	for(map<HardwareAddress, AllocatedAddress>::const_iterator it = inNetworkByHardware.begin()
+		; it != inNetworkByHardware.end()
+		; ++it) {
 		const AllocatedAddress& allocatedAddress = it->second;
 		if(time(NULL) - allocatedAddress.allocationTime > allocatedAddress.leaseTime) {
 			candidateAddress = allocatedAddress.ipAddress;
-			inNetwork.erase(it);
+			inNetworkByHardware.erase(it);
 		}
 	}
 
-	return candidateAddress;
+	map<ClientSpecialId, AllocatedAddress>& inNetworkById = allocatedBySpecialId[network];
+	for(map<ClientSpecialId, AllocatedAddress>::const_iterator it = inNetworkById.begin()
+		; it != inNetworkById.end()
+		; ++it) {
+		const AllocatedAddress& allocatedAddress = it->second;
+		if(time(NULL) - allocatedAddress.allocationTime > allocatedAddress.leaseTime) {
+			candidateAddress = allocatedAddress.ipAddress;
+			inNetworkById.erase(it);
+		}
+	}
 
-/*
-		std::map<uint32_t, std::map<HardwareAddress, AllocatedAddress> > allocatedByHardware;
-		std::map<uint32_t, std::map<ClientSpecialId, AllocatedAddress> > allocatedBySpecialId;
-*/
+
+	if(!candidateAddress) {
+		throw runtime_error("There are no more addresses available");
+	}
+
+	return candidateAddress;
 }
 
 AllocatedAddress& AddressesAllocator::allocate(const uint32_t networkAddress, const HardwareAddress& hardwareAddress, const uint32_t ip) {
