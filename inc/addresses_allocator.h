@@ -21,6 +21,7 @@ class AddressesAllocator {
 		void freeClientAddress(const Client& client);
 		void freeClientAddressButLeaveUnavailable(const Client& client);
 		AllocatedAddress& getAllocatedAddress(const Client& client);
+		void softDelete(const Client& client);
 
 	private:
 		Config& config;

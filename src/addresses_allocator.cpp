@@ -116,3 +116,10 @@ void AddressesAllocator::freeClientAddressButLeaveUnavailable(const Client& clie
 		(client.identificationMethod == BASED_ON_HARDWARE) ? free(client.networkAddress, client.hardwareAddress) : free(client.networkAddress, client.specialId);
 	}
 }
+
+void AddressesAllocator::softDelete(const Client& client) {
+	if(hasClientAllocatedAddress(client)) {
+		AllocatedAddress& allocatedAddress = getAllocatedAddress(client);
+		allocatedAddress.allocationTime -= allocatedAddress.leaseTime;
+	}
+}

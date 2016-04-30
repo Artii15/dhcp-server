@@ -5,4 +5,5 @@ ReleaseHandler::ReleaseHandler(TransactionsStorage& storage, Client& clientToHan
 
 
 void ReleaseHandler::handle(struct DHCPMessage&, Options&, uint32_t dstAddr) {
+	allocator.softDelete(client);
 }
