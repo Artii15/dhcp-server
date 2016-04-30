@@ -89,20 +89,7 @@ void RequestHandler::sendAck(DHCPMessage& request, const AllocatedAddress& alloc
 		.pack(DNS_OPTION, allocatedAddress.dnsServers)
 		.pack(END_OPTION);
 	
-	/*
-
-	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(ack), 0, (uint8_t*)&ack, sizeof(ack), server.lnetHandle, 0);
-
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(ack), IPPROTO_UDP, targetIpAddress, server.lnetHandle);
-
-	uint8_t zeroAddr[6] = {0};
-	if(memcmp(zeroAddr, targetHardwareAddress, 6) != 0) {
-		libnet_autobuild_ethernet(targetHardwareAddress, ETH_P_IP, server.lnetHandle);
-	}
-
-	libnet_write(server.lnetHandle);
-	libnet_clear_packet(server.lnetHandle);
-	*/
+	server.sender->send(ack, allocatedAddress, DHCPACK);
 }
 
 void RequestHandler::sendNak(DHCPMessage&, Options&) {
