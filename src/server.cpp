@@ -106,6 +106,8 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 	Server& server = *((Server*)srv);
 	client.networkAddress = server.networkResolver->determineNetworkAddress(dhcpMsg->giaddr);
 
+	struct iphdr* ipHeader = (struct iphdr*)(rawMessage + sizeof(struct ethhdr));
+
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
 	switch(operationType) {
 		case(DHCPDISCOVER): {
