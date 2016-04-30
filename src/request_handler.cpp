@@ -1,4 +1,5 @@
 #include "../inc/request_handler.h"
+#include "../inc/packer.h"
 
 RequestHandler::RequestHandler(TransactionsStorage& storage, Client& clientToHandle, AddressesAllocator& addrAllocator, Server& serv)
 	: transactionsStorage(storage), client(clientToHandle), allocator(addrAllocator), server(serv) {}
@@ -65,7 +66,6 @@ bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& opti
 }
 
 void RequestHandler::sendAck(DHCPMessage& request, const AllocatedAddress& allocatedAddress) {
-/*
 	DHCPMessage ack;
 	memset(&ack, 0, sizeof(ack));
 
@@ -74,32 +74,34 @@ void RequestHandler::sendAck(DHCPMessage& request, const AllocatedAddress& alloc
 	ack.hlen = request.hlen;
 	ack.xid = request.xid;
 	ack.yiaddr = allocatedAddress.ipAddress;
-	ack.flags = dhcpMsg->flags;
-	ack.giaddr = dhcpMsg->giaddr;
-	memcpy(ack.chaddr, dhcpMsg->chaddr, MAX_HADDR_SIZE);
-	ack.magicCookie = dhcpMsg->magicCookie;
+	ack.flags = request.flags;
+	ack.giaddr = request.giaddr;
+	memcpy(ack.chaddr, request.chaddr, MAX_HADDR_SIZE);
+	ack.magicCookie = request.magicCookie;
 
-	uint8_t* optionsPtr = packIpAddressLeaseTime(ack.options, allocatedAddress.leaseTime);
-	optionsPtr = packMessageType(optionsPtr, DHCPACK);
-	optionsPtr = packServerIdentifier(optionsPtr);
-	optionsPtr = packNetworkMask(optionsPtr, allocatedAddress.mask);
-	optionsPtr = packRouters(optionsPtr, allocatedAddress.routers);
-	optionsPtr = packDnsServers(optionsPtr, allocatedAddress.dnsServers);
-	*(optionsPtr++) = END_OPTION;
 
-	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(ack), 0, (uint8_t*)&ack, sizeof(ack), lnetHandle, 0);
+	Packer packer(ack.options);
+	packer.pack(IP_ADDRESS_LEASE_TIME, allocatedAddress.leaseTime)
+		.pack(DHCP_MESSAGE_TYPE, (uint8_t)DHCPOFFER)
+		.pack(SERVER_IDENTIFIER, server.serverIp)
+		.pack(SUBNET_MASK, allocatedAddress.mask)
+		.pack(ROUTERS, allocatedAddress.routers)
+		.pack(DNS_OPTION, allocatedAddress.dnsServers)
+		.pack(END_OPTION);
+	
+	/*
 
-	bool performBroadcast = (dhcpMsg->flags & BROADCAST_FLAG);
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(ack), IPPROTO_UDP, performBroadcast ? 0xffffffffffffffff : ack.yiaddr, lnetHandle);
+	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(ack), 0, (uint8_t*)&ack, sizeof(ack), server.lnetHandle, 0);
 
-	uint8_t dstEthAddr[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	if(!performBroadcast) {
-		memcpy(dstEthAddr, dhcpMsg->chaddr, 6);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(ack), IPPROTO_UDP, targetIpAddress, server.lnetHandle);
+
+	uint8_t zeroAddr[6] = {0};
+	if(memcmp(zeroAddr, targetHardwareAddress, 6) != 0) {
+		libnet_autobuild_ethernet(targetHardwareAddress, ETH_P_IP, server.lnetHandle);
 	}
-	libnet_autobuild_ethernet(dstEthAddr, ETH_P_IP, lnetHandle);
 
-	libnet_write(lnetHandle);
-	libnet_clear_packet(lnetHandle);
+	libnet_write(server.lnetHandle);
+	libnet_clear_packet(server.lnetHandle);
 	*/
 }
 
