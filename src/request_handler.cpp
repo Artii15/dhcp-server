@@ -16,8 +16,10 @@ void RequestHandler::handle(struct DHCPMessage& request, Options& options) {
 			handleInitRebootState(request, options);
 			break;
 		case RENEWING:
+			handleRenewingState(request, options);
 			break;
 		case REBINDING:
+			handleRebindingState(request, options);
 			break;
 		case UNKNOWN:
 			break;
@@ -38,13 +40,13 @@ ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Op
 	}
 	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) 
 			&& request.ciaddr != 0
-			// TODO: src address test 
+			// TODO: dst address test 
 			&& (!options.exists(REQUESTED_IP_ADDRESS) || (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == 0)) {
 		return RENEWING;
 	}
 	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) 
 			&& request.ciaddr != 0
-			// TODO: src address test 
+			// TODO: dst address test 
 			&& (!options.exists(REQUESTED_IP_ADDRESS) || (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == 0)) {
 		return REBINDING;
 	}
@@ -95,7 +97,13 @@ void RequestHandler::handleRenewingState(DHCPMessage& request, Options& options)
 	}
 }
 
-
+void RequestHandler::handleRebindingState(DHCPMessage& request, Options& options) {
+	if(allocator.hasClientAllocatedAddress(client)) {
+		//TODO: Refresh lease time here
+		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
+		respond(request, allocatedAddress, DHCPACK);
+	}
+}
 
 void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& allocatedAddress, uint8_t messageType) {
 	DHCPMessage response;
