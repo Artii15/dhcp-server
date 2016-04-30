@@ -9,6 +9,7 @@
 #include "config.h"
 #include "transactions_storage.h"
 #include "network_resolver.h"
+#include "sender.h"
 
 class Server {
 	public:
@@ -19,6 +20,7 @@ class Server {
 
 		uint32_t serverIp;
 		libnet_t* lnetHandle;
+		Sender* sender;
 
 	private:
 		Config &config;

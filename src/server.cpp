@@ -37,6 +37,7 @@ Server::Server(Config &configuration, AddressesAllocator& allocator, Transaction
 	}
 
 	lnetHandle = libnet_init(LIBNET_LINK, interfaceName, lnetErrbuf);
+	sender = new Sender(lnetHandle);
 
 	setPacketsFilter();
 }
@@ -73,6 +74,7 @@ Server::~Server() {
 	pcap_close(pcapHandle); 
 	libnet_destroy(lnetHandle);
 	delete networkResolver;
+	delete sender;
 }
 
 void Server::listen() {
