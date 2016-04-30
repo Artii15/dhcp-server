@@ -3,6 +3,7 @@
 #include "../inc/protocol.h"
 #include "../inc/client.h"
 #include "../inc/discover_handler.h"
+#include "../inc/request_handler.h"
 
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -116,6 +117,7 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 			break;	
 		}
 		case(DHCPREQUEST): {
+			RequestHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
 			break;	
 		}
 	}
