@@ -48,8 +48,8 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 	if(*options.get(SERVER_IDENTIFIER).value != server.serverIp) {
 		allocator.freeClientAddress(client);
 	}
-	else {
-		if(isRequestedAddressValid(options)) {
+	else if(transactionsStorage.transactionExists(request.xid)) {
+		if(isRequestedAddressValid(request, options)) {
 			sendAck(request, options);
 		}
 		else {
@@ -58,8 +58,9 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 	}
 }
 
-bool RequestHandler::isRequestedAddressValid(Options&) {
-	return true;
+bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& options) {
+	return options.exists(REQUESTED_IP_ADDRESS) 
+		&& (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == transactionsStorage.getTransaction(request.xid).allocatedAddress->ipAddress;
 }
 
 void RequestHandler::sendAck(DHCPMessage&, Options&) {
