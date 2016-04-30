@@ -9,6 +9,7 @@ void RequestHandler::handle(struct DHCPMessage& request, Options& options) {
 
 	switch(clientState) {
 		case SELECTING:
+			handleSelectingState(request, options);
 			break;
 		case INIT_REBOOT:
 			break;
@@ -19,6 +20,7 @@ void RequestHandler::handle(struct DHCPMessage& request, Options& options) {
 		case UNKNOWN:
 			break;
 	}
+	transactionsStorage.removeTransaction(request.xid);
 }
 
 ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Options& options) {
@@ -45,9 +47,25 @@ ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Op
 void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& options) {
 	if(*options.get(SERVER_IDENTIFIER).value != server.serverIp) {
 		allocator.freeClientAddress(client);
-		transactionsStorage.removeTransaction(request.xid);
 	}
 	else {
-		
+		if(isRequestedAddressValid(options)) {
+			sendAck(request, options);
+		}
+		else {
+			sendNak(request, options);
+		}
 	}
+}
+
+bool RequestHandler::isRequestedAddressValid(Options&) {
+	return true;
+}
+
+void RequestHandler::sendAck(DHCPMessage&, Options&) {
+
+}
+
+void RequestHandler::sendNak(DHCPMessage&, Options&) {
+
 }
