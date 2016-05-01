@@ -62,10 +62,10 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 	else if(transactionsStorage.transactionExists(request.xid)) {
 		const AllocatedAddress& allocatedAddress = *transactionsStorage.getTransaction(request.xid).allocatedAddress;
 		if(isRequestedAddressValid(request, options, allocatedAddress)) {
-			respond(request, allocatedAddress, DHCPACK);
+			respond(request, options, allocatedAddress, DHCPACK);
 		}
 		else {
-			respond(request, allocatedAddress, DHCPNAK);
+			respond(request, options, allocatedAddress, DHCPNAK);
 		}
 	}
 }
@@ -79,12 +79,12 @@ void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options&
 	if(allocator.hasClientAllocatedAddress(client)) {
 		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
 		if(allocatedAddress.ipAddress == (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value) {
-			respond(request, allocatedAddress, DHCPACK);
+			respond(request, options, allocatedAddress, DHCPACK);
 		}
 		else {
 			AllocatedAddress invalidAddress = allocatedAddress;
 			invalidAddress.ipAddress = (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value;
-			respond(request, invalidAddress, DHCPNAK);
+			respond(request, options, invalidAddress, DHCPNAK);
 		}
 	}
 }
@@ -93,7 +93,7 @@ void RequestHandler::handleRenewingState(DHCPMessage& request, Options& options)
 	if(allocator.hasClientAllocatedAddress(client)) {
 		//TODO: Refresh lease time here
 		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
-		respond(request, allocatedAddress, DHCPACK);
+		respond(request, options, allocatedAddress, DHCPACK);
 	}
 }
 
@@ -101,11 +101,11 @@ void RequestHandler::handleRebindingState(DHCPMessage& request, Options& options
 	if(allocator.hasClientAllocatedAddress(client)) {
 		//TODO: Refresh lease time here
 		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
-		respond(request, allocatedAddress, DHCPACK);
+		respond(request, options, allocatedAddress, DHCPACK);
 	}
 }
 
-void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& allocatedAddress, uint8_t messageType) {
+void RequestHandler::respond(DHCPMessage& request, Options& options, const AllocatedAddress& allocatedAddress, uint8_t messageType) {
 	DHCPMessage response;
 	memset(&response, 0, sizeof(response));
 
@@ -129,5 +129,5 @@ void RequestHandler::respond(DHCPMessage& request, const AllocatedAddress& alloc
 		.pack(DNS_OPTION, allocatedAddress.dnsServers)
 		.pack(END_OPTION);
 	
-	server.sender->send(response, allocatedAddress, DHCPACK);
+	server.sender->send(response, options, DHCPACK);
 }

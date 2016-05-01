@@ -10,11 +10,11 @@ void DiscoverHandler::handle(struct DHCPMessage& message, Options& options, uint
 		AllocatedAddress& address = allocator.allocateAddressFor(client);
 
 		transactionsStorage.createTransaction(message.xid, &address);
-		sendOffer(message, address);
+		sendOffer(message, options, address);
 	}
 }
 
-void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocatedAddress) {
+void DiscoverHandler::sendOffer(DHCPMessage& request, Options& options, AllocatedAddress& allocatedAddress) {
 	DHCPMessage offer;
 	memset(&offer, 0, sizeof(offer));
 
@@ -37,5 +37,5 @@ void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocate
 		.pack(DNS_OPTION, allocatedAddress.dnsServers)
 		.pack(END_OPTION);
 	
-	server.sender->send(offer, allocatedAddress, DHCPOFFER);
+	server.sender->send(offer, options, DHCPOFFER);
 }

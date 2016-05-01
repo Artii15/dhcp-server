@@ -1,6 +1,7 @@
 #include "../inc/sender.h"
 #include "../inc/protocol.h"
 #include "../inc/option.h"
+#include "../inc/packet_converter.h"
 
 #include <linux/if_ether.h>
 
@@ -10,7 +11,7 @@ Sender::Sender(libnet_t* lnetHandle) {
 	this->lnetHandle = lnetHandle;
 }
 
-void Sender::send(DHCPMessage& response, const AllocatedAddress&, unsigned messageType) {
+void Sender::send(DHCPMessage& response, Options& options, unsigned messageType) {
 	uint32_t targetIpAddress = 0;
 	uint8_t targetHardwareAddress[BROADCAST_ADDR_LEN] = {0};
 
@@ -35,6 +36,9 @@ void Sender::send(DHCPMessage& response, const AllocatedAddress&, unsigned messa
 		targetIpAddress = response.yiaddr;
 		memcpy(targetHardwareAddress, response.chaddr, BROADCAST_ADDR_LEN);
 	}
+
+	PacketConverter::toNetworkReprezentation(response);
+	options.toNetworkReprezentation();
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(response), 0, (uint8_t*)&response, sizeof(response), lnetHandle, 0);
 

@@ -30,6 +30,6 @@ void InformHandler::handle(struct DHCPMessage& message, Options& options, uint32
 			.pack(DNS_OPTION, allocatedAddress.dnsServers)
 			.pack(END_OPTION);
 		
-		server.sender->send(ack, allocatedAddress, DHCPACK);
+		server.sender->send(ack, options, DHCPACK);
 	}
 }

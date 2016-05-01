@@ -19,7 +19,7 @@ class DiscoverHandler {
 		AddressesAllocator& allocator;
 		Server& server;
 
-		void sendOffer(DHCPMessage& request, AllocatedAddress& allocatedAddress);
+		void sendOffer(DHCPMessage& request, Options& options, AllocatedAddress& allocatedAddress);
 };
 
 #endif

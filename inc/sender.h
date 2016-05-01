@@ -4,13 +4,14 @@
 #include <libnet.h>
 #include "dhcp_message.h"
 #include "allocated_address.h"
+#include "options.h"
 
 #define IP_BROADCAST_ADDR 0xffffffff
 
 class Sender {
 	public:
 		Sender(libnet_t* lnetHandle);
-		void send(DHCPMessage&, const AllocatedAddress&, unsigned messageType);
+		void send(DHCPMessage&, Options&, unsigned messageType);
 
 	private:
 		libnet_t* lnetHandle;
