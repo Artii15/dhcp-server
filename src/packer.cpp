@@ -11,7 +11,7 @@ Packer& Packer::pack(uint8_t optionType, uint32_t value) {
 	*(buffer++) = optionType;
 	*(buffer++) = sizeof(value);
 
-	*buffer = value;
+	memcpy(buffer, &value, sizeof(value));
 	buffer += sizeof(value);
 
 	return *this;
