@@ -29,26 +29,27 @@ void Options::read(uint8_t* rawOptions, unsigned maxOptionsLength) {
 
 void Options::tryToSetHostBytesOrder(Option& option) {
 	switch(option.code) {
-		case SUBNET_MASK: {
+		case SUBNET_MASK: 
 			toHost32(option);
 			break;
-		}
-		case ROUTERS: {
+		case ROUTERS: 
 			toHostArray32(option);
 			break;
-		}
+		case DNS_OPTION: 
+			toHostArray32(option);
+			break;
+		case REQUESTED_IP_ADDRESS: 
+			toHost32(option);
+			break;
+		case IP_ADDRESS_LEASE_TIME: 
+			toHost32(option);
+			break;
+		case SERVER_IDENTIFIER: 
+			toHost32(option);
+			break;
+		default:
+			break;
 	}
-
-/*
-#define ROUTERS 3
-#define DNS_OPTION 6
-#define REQUESTED_IP_ADDRESS 50
-#define IP_ADDRESS_LEASE_TIME 51
-#define DHCP_MESSAGE_TYPE 53
-#define SERVER_IDENTIFIER 54
-#define CLIENT_IDENTIFIER 61
-#define END_OPTION 255
-*/
 }
 
 void Options::toHostArray32(Option& option) {
