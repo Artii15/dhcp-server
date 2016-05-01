@@ -2,6 +2,7 @@
 #include "../inc/protocol.h"
 #include "../inc/option.h"
 #include "../inc/packet_converter.h"
+#include "../inc/options.h"
 
 #include <linux/if_ether.h>
 
@@ -38,6 +39,8 @@ void Sender::send(DHCPMessage& response, unsigned messageType) {
 	}
 
 	PacketConverter::toNetworkReprezentation(response);
+	Options options(response.options);
+	options.toNetworkReprezentation();
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(response), 0, (uint8_t*)&response, sizeof(response), lnetHandle, 0);
 

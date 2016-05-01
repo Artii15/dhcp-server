@@ -4,6 +4,29 @@
 
 using namespace std;
 
+Options::Options(uint8_t* rawOptions) {
+	read(rawOptions, calculateOptionsLength(rawOptions));
+}
+
+size_t Options::calculateOptionsLength(uint8_t* rawOptions) {
+	size_t optionsSize = 0;
+	uint8_t* seek = rawOptions;
+	bool endReaded = false;
+
+	while(!endReaded) {
+		uint8_t optionCode = *(seek++);
+		uint8_t optionLength = *(seek++);
+		size_t optionSize = sizeof(optionCode) + sizeof(optionLength) + optionLength;
+
+		seek += optionLength;
+		optionsSize += optionSize;
+
+		endReaded = (optionCode == END_OPTION);
+	}
+
+	return optionsSize;
+}
+
 Options::Options(uint8_t* rawOptions, unsigned maxOptionsLength) {
 	read(rawOptions, maxOptionsLength);
 }
