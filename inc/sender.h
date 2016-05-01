@@ -11,7 +11,7 @@
 class Sender {
 	public:
 		Sender(libnet_t* lnetHandle);
-		void send(DHCPMessage&, Options&, unsigned messageType);
+		void send(DHCPMessage&, unsigned messageType);
 
 	private:
 		libnet_t* lnetHandle;

@@ -29,7 +29,7 @@ class RequestHandler {
 		void handleRenewingState(DHCPMessage&, Options&);
 		void handleRebindingState(DHCPMessage&, Options&);
 
-		void respond(DHCPMessage&, Options& options, const AllocatedAddress&, uint8_t messageType);
+		void respond(DHCPMessage&, const AllocatedAddress&, uint8_t messageType);
 };
 
 #endif

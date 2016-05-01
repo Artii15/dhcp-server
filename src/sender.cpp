@@ -11,7 +11,7 @@ Sender::Sender(libnet_t* lnetHandle) {
 	this->lnetHandle = lnetHandle;
 }
 
-void Sender::send(DHCPMessage& response, Options& options, unsigned messageType) {
+void Sender::send(DHCPMessage& response, unsigned messageType) {
 	uint32_t targetIpAddress = 0;
 	uint8_t targetHardwareAddress[BROADCAST_ADDR_LEN] = {0};
 
@@ -38,7 +38,6 @@ void Sender::send(DHCPMessage& response, Options& options, unsigned messageType)
 	}
 
 	PacketConverter::toNetworkReprezentation(response);
-	options.toNetworkReprezentation();
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(response), 0, (uint8_t*)&response, sizeof(response), lnetHandle, 0);
 
