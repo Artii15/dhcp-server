@@ -36,6 +36,6 @@ void DiscoverHandler::sendOffer(DHCPMessage& request, AllocatedAddress& allocate
 		.pack(ROUTERS, allocatedAddress.routers)
 		.pack(DNS_OPTION, allocatedAddress.dnsServers)
 		.pack(END_OPTION);
-	
+
 	server.sender->send(offer, DHCPOFFER);
 }
