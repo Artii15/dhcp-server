@@ -56,7 +56,7 @@ uint32_t Server::determineDeviceIp(const char* interfaceName) {
 	ioctl(fd, SIOCGIFADDR, &ifr);
 	close(fd);
 
-	return ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr.s_addr;
+	return ntohl(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr.s_addr);
 }
 
 void Server::setPacketsFilter() {
