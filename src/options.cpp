@@ -93,7 +93,7 @@ void Options::toHost32(Option& option) {
 }
 
 void Options::toHost32(uint8_t* bytes) {
-	uint32_t hostValue = ntohl((uint32_t)*bytes);
+	uint32_t hostValue = ntohl(*((uint32_t*)bytes));
 	memcpy(bytes, &hostValue, sizeof(hostValue));
 }
 
@@ -140,7 +140,7 @@ void Options::toNetwork32(Option& option) {
 }
 
 void Options::toNetwork32(uint8_t* bytes) {
-	uint32_t networkValue = htonl((uint32_t)*bytes);
+	uint32_t networkValue = htonl(*((uint32_t*)bytes));
 	memcpy(bytes, &networkValue, sizeof(networkValue));
 }
 
