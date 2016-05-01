@@ -7,6 +7,7 @@
 #include "../inc/decline_handler.h"
 #include "../inc/release_handler.h"
 #include "../inc/inform_handler.h"
+#include "../inc/packet_converter.h"
 
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -87,14 +88,16 @@ void Server::listen() {
 
 void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_char *rawMessage) {
 	unsigned int dhcpMsgStartPos = sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
-	struct DHCPMessage* dhcpMsg = (struct DHCPMessage*)(rawMessage + dhcpMsgStartPos);
-	Options options(dhcpMsg->options, header->caplen - dhcpMsgStartPos);
+	DHCPMessage& dhcpMsg = *(DHCPMessage*)(rawMessage + dhcpMsgStartPos);
+	Options options(dhcpMsg.options, header->caplen - dhcpMsgStartPos);
+
+	PacketConverter::toHostReprezentation(dhcpMsg);
 
 	Client client;
 	memset(&client, 0, sizeof(client));
 
-	client.hardwareAddress.addressType = dhcpMsg->htype;
-	memcpy(client.hardwareAddress.hardwareAddress, dhcpMsg->chaddr, MAX_HADDR_SIZE);
+	client.hardwareAddress.addressType = dhcpMsg.htype;
+	memcpy(client.hardwareAddress.hardwareAddress, dhcpMsg.chaddr, MAX_HADDR_SIZE);
 
 	if(options.exists(CLIENT_IDENTIFIER)) {
 		Option& clientIdOption = options.get(CLIENT_IDENTIFIER);
@@ -108,7 +111,7 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 	}
 
 	Server& server = *((Server*)srv);
-	client.networkAddress = server.networkResolver->determineNetworkAddress(dhcpMsg->giaddr);
+	client.networkAddress = server.networkResolver->determineNetworkAddress(dhcpMsg.giaddr);
 
 	struct iphdr* ipHeader = (struct iphdr*)(rawMessage + sizeof(struct ethhdr));
 	uint32_t dstAddr = ntohl(ipHeader->daddr);
@@ -116,23 +119,23 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 	uint8_t operationType = *options.get(DHCP_MESSAGE_TYPE).value;
 	switch(operationType) {
 		case(DHCPDISCOVER): {
-			DiscoverHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
+			DiscoverHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(dhcpMsg, options, dstAddr);
 			break;	
 		}
 		case(DHCPREQUEST): {
-			RequestHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
+			RequestHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(dhcpMsg, options, dstAddr);
 			break;	
 		}
 		case(DHCPDECLINE): {
-			DeclineHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
+			DeclineHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(dhcpMsg, options, dstAddr);
 			break;	
 		}
 		case(DHCPRELEASE): {
-			ReleaseHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
+			ReleaseHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(dhcpMsg, options, dstAddr);
 			break;	
 		}
 		case(DHCPINFORM): {
-			InformHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(*dhcpMsg, options, dstAddr);
+			InformHandler(server.transactionsStorage, client, server.addressesAllocator, server).handle(dhcpMsg, options, dstAddr);
 			break;	
 		};
 	}
