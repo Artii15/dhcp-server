@@ -91,16 +91,14 @@ void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options&
 
 void RequestHandler::handleRenewingState(DHCPMessage& request, Options& options) {
 	if(allocator.hasClientAllocatedAddress(client)) {
-		//TODO: Refresh lease time here
-		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
+		const AllocatedAddress& allocatedAddress = allocator.refreshLeaseTime(client);
 		respond(request, options, allocatedAddress, DHCPACK);
 	}
 }
 
 void RequestHandler::handleRebindingState(DHCPMessage& request, Options& options) {
 	if(allocator.hasClientAllocatedAddress(client)) {
-		//TODO: Refresh lease time here
-		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
+		const AllocatedAddress& allocatedAddress = allocator.refreshLeaseTime(client);
 		respond(request, options, allocatedAddress, DHCPACK);
 	}
 }

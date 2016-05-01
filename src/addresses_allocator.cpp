@@ -166,3 +166,10 @@ void AddressesAllocator::softDelete(const Client& client) {
 		allocatedAddress.allocationTime -= allocatedAddress.leaseTime;
 	}
 }
+
+AllocatedAddress& AddressesAllocator::refreshLeaseTime(const Client& client) {
+	AllocatedAddress& allocatedAddress = getAllocatedAddress(client);
+	allocatedAddress.allocationTime = time(NULL);
+
+	return allocatedAddress;
+}
