@@ -42,6 +42,8 @@ uint32_t AddressesAllocator::findNextAddr(uint32_t network) {
 uint32_t AddressesAllocator::reuseOutdatedAddress(uint32_t network) {
 	uint32_t candidateAddress = 0;
 
+	AddressesPool* correspondingPool = addressesPools[network];
+
 	map<HardwareAddress, AllocatedAddress>& inNetworkByHardware = allocatedByHardware[network];
 	for(map<HardwareAddress, AllocatedAddress>::const_iterator it = inNetworkByHardware.begin()
 		; it != inNetworkByHardware.end()
@@ -49,6 +51,7 @@ uint32_t AddressesAllocator::reuseOutdatedAddress(uint32_t network) {
 		const AllocatedAddress& allocatedAddress = it->second;
 		if(time(NULL) - allocatedAddress.allocationTime > allocatedAddress.leaseTime) {
 			candidateAddress = allocatedAddress.ipAddress;
+			correspondingPool->abandon(candidateAddress);
 			inNetworkByHardware.erase(it);
 		}
 	}
@@ -60,16 +63,12 @@ uint32_t AddressesAllocator::reuseOutdatedAddress(uint32_t network) {
 		const AllocatedAddress& allocatedAddress = it->second;
 		if(time(NULL) - allocatedAddress.allocationTime > allocatedAddress.leaseTime) {
 			candidateAddress = allocatedAddress.ipAddress;
+			correspondingPool->abandon(candidateAddress);
 			inNetworkById.erase(it);
 		}
 	}
 
-
-	if(!candidateAddress) {
-		throw runtime_error("There are no more addresses available");
-	}
-
-	return candidateAddress;
+	return correspondingPool->getNext();
 }
 
 AllocatedAddress& AddressesAllocator::allocate(const uint32_t networkAddress, const HardwareAddress& hardwareAddress, const uint32_t ip) {
