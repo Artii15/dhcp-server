@@ -7,7 +7,6 @@ RequestHandler::RequestHandler(TransactionsStorage& storage, Client& clientToHan
 
 void RequestHandler::handle(struct DHCPMessage& request, Options& options, uint32_t dstAddr) {
 	ClientState clientState = determineClientState(request, options, dstAddr);
-
 	switch(clientState) {
 		case SELECTING:
 			handleSelectingState(request, options);
@@ -56,7 +55,8 @@ ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Op
 }
 
 void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& options) {
-	if(*options.get(SERVER_IDENTIFIER).value != server.serverIp) {
+	Option& serverIdentifier = options.get(SERVER_IDENTIFIER);
+	if(serverIdentifier.length != sizeof(uint32_t) || *((uint32_t*)serverIdentifier.value) != server.serverIp) {
 		allocator.freeClientAddress(client);
 	}
 	else if(transactionsStorage.transactionExists(request.xid)) {
