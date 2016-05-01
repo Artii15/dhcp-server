@@ -10,7 +10,9 @@ Packer::Packer(uint8_t* buffer) {
 Packer& Packer::pack(uint8_t optionType, uint32_t value) {
 	*(buffer++) = optionType;
 	*(buffer++) = sizeof(value);
-	*(buffer++) = value;
+
+	*buffer = value;
+	buffer += sizeof(value);
 
 	return *this;
 }
@@ -18,7 +20,9 @@ Packer& Packer::pack(uint8_t optionType, uint32_t value) {
 Packer& Packer::pack(uint8_t optionType, uint8_t value) {
 	*(buffer++) = optionType;
 	*(buffer++) = sizeof(value);
-	*(buffer++) = value;
+
+	*buffer = value;
+	buffer += sizeof(value);
 
 	return *this;
 }

@@ -44,7 +44,7 @@ void Sender::send(DHCPMessage& response, unsigned messageType) {
 
 	libnet_build_udp(Protocol::getServicePortByName("bootps", "udp"), Protocol::getServicePortByName("bootpc", "udp"), LIBNET_UDP_H + sizeof(response), 0, (uint8_t*)&response, sizeof(response), lnetHandle, 0);
 
-	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(response), IPPROTO_UDP, targetIpAddress, lnetHandle);
+	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(response), IPPROTO_UDP, htons(targetIpAddress), lnetHandle);
 
 	uint8_t zeroAddr[BROADCAST_ADDR_LEN] = {0};
 	if(memcmp(zeroAddr, targetHardwareAddress, BROADCAST_ADDR_LEN) != 0) {
