@@ -22,7 +22,6 @@ void Options::read(uint8_t* rawOptions, unsigned maxOptionsLength) {
 			break;
 		}
 
-
 		i += (sizeof(option.code) + sizeof(option.length) + option.length);
 	}
 }
