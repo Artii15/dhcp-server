@@ -9,6 +9,8 @@ class Options {
 		Options(uint8_t* rawOptions, unsigned maxOptionsLength);
 		Option& get(uint8_t code);
 		bool exists(uint8_t code);
+		void toHostReprezentation();
+		void toNetworkReprezentation();
 
 	private:
 		void read(uint8_t* rawOptions, unsigned maxOptionsLength);

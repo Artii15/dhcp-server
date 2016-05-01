@@ -89,9 +89,10 @@ void Server::listen() {
 void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_char *rawMessage) {
 	unsigned int dhcpMsgStartPos = sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr);
 	DHCPMessage& dhcpMsg = *(DHCPMessage*)(rawMessage + dhcpMsgStartPos);
-	Options options(dhcpMsg.options, header->caplen - dhcpMsgStartPos);
-
 	PacketConverter::toHostReprezentation(dhcpMsg);
+
+	Options options(dhcpMsg.options, header->caplen - dhcpMsgStartPos);
+	options.toHostReprezentation();
 
 	Client client;
 	memset(&client, 0, sizeof(client));

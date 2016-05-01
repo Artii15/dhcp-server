@@ -2,6 +2,8 @@
 #include <string.h>
 #include <arpa/inet.h>
 
+using namespace std;
+
 Options::Options(uint8_t* rawOptions, unsigned maxOptionsLength) {
 	read(rawOptions, maxOptionsLength);
 }
@@ -14,7 +16,6 @@ void Options::read(uint8_t* rawOptions, unsigned maxOptionsLength) {
 		option.value = &rawOptions[i+2];
 
 		if(option.length <= maxOptionsLength - (i + 2)) {
-			tryToSetHostBytesOrder(option);
 			options[option.code] = option;
 		}
 
@@ -23,6 +24,13 @@ void Options::read(uint8_t* rawOptions, unsigned maxOptionsLength) {
 		}
 
 		i += (sizeof(option.code) + sizeof(option.length) + option.length);
+	}
+}
+
+void Options::toHostReprezentation() {
+	for(unordered_map<uint8_t, Option>::iterator it = options.begin(); it != options.end(); it++) {
+		Option& option = it->second;
+		tryToSetHostBytesOrder(option);
 	}
 }
 
@@ -49,6 +57,10 @@ void Options::tryToSetHostBytesOrder(Option& option) {
 		default:
 			break;
 	}
+}
+
+void Options::toNetworkReprezentation() {
+
 }
 
 void Options::toHostArray32(Option& option) {
