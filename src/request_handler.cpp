@@ -28,26 +28,26 @@ void RequestHandler::handle(struct DHCPMessage& request, Options& options, uint3
 }
 
 ClientState RequestHandler::determineClientState(struct DHCPMessage& request, Options& options, uint32_t dstAddr) {
-	if(options.exists(SERVER_IDENTIFIER) && (uint32_t)*options.get(SERVER_IDENTIFIER).value != 0
+	if(options.exists(SERVER_IDENTIFIER) && *((uint32_t*)options.get(SERVER_IDENTIFIER).value) != 0
 		&& request.ciaddr == 0 
-		&& options.exists(REQUESTED_IP_ADDRESS) && (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value != 0) {
+		&& options.exists(REQUESTED_IP_ADDRESS) && *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value) != 0) {
 		return SELECTING;
 	}
-	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) 
+	else if((!options.exists(SERVER_IDENTIFIER) || *((uint32_t*)options.get(SERVER_IDENTIFIER).value) == 0) 
 			&& request.ciaddr == 0
-			&& options.exists(REQUESTED_IP_ADDRESS) && (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value != 0) {
+			&& options.exists(REQUESTED_IP_ADDRESS) && *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value) != 0) {
 		return INIT_REBOOT;
 	}
-	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) 
+	else if((!options.exists(SERVER_IDENTIFIER) || *((uint32_t*)options.get(SERVER_IDENTIFIER).value) == 0) 
 			&& request.ciaddr != 0
 			&& dstAddr != IP_BROADCAST_ADDR
-			&& (!options.exists(REQUESTED_IP_ADDRESS) || (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == 0)) {
+			&& (!options.exists(REQUESTED_IP_ADDRESS) || *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value) == 0)) {
 		return RENEWING;
 	}
-	else if((!options.exists(SERVER_IDENTIFIER) || (uint32_t)*options.get(SERVER_IDENTIFIER).value == 0) 
+	else if((!options.exists(SERVER_IDENTIFIER) || *((uint32_t*)options.get(SERVER_IDENTIFIER).value) == 0) 
 			&& request.ciaddr != 0
 			&& dstAddr == IP_BROADCAST_ADDR
-			&& (!options.exists(REQUESTED_IP_ADDRESS) || (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == 0)) {
+			&& (!options.exists(REQUESTED_IP_ADDRESS) || *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value) == 0)) {
 		return REBINDING;
 	}
 	else {
@@ -72,18 +72,18 @@ void RequestHandler::handleSelectingState(struct DHCPMessage& request, Options& 
 
 bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& options, const AllocatedAddress& allocatedAddress) {
 	return options.exists(REQUESTED_IP_ADDRESS) 
-		&& (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value == allocatedAddress.ipAddress;
+		&& *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value) == allocatedAddress.ipAddress;
 }
 
 void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options& options) {
 	if(allocator.hasClientAllocatedAddress(client)) {
 		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
-		if(allocatedAddress.ipAddress == (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value) {
+		if(allocatedAddress.ipAddress == *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value)) {
 			respond(request, allocatedAddress, DHCPACK);
 		}
 		else {
 			AllocatedAddress invalidAddress = allocatedAddress;
-			invalidAddress.ipAddress = (uint32_t)*options.get(REQUESTED_IP_ADDRESS).value;
+			invalidAddress.ipAddress = *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value);
 			respond(request, invalidAddress, DHCPNAK);
 		}
 	}
