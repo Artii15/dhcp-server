@@ -36,5 +36,6 @@ void StateSerializer::serialize(const unsigned value) {
 }
 
 void StateSerializer::serialize(const HardwareAddress& hardwareAddress) {
-
+	fwrite(&hardwareAddress.addressType, sizeof(uint8_t), 1, file);
+	fwrite(&hardwareAddress.hardwareAddress, sizeof(uint8_t), MAX_HADDR_SIZE, file);
 }
