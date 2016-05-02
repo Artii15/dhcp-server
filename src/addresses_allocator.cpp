@@ -208,6 +208,10 @@ void AddressesAllocator::tryToLoadCachedState() {
 template <class T> void AddressesAllocator::loadAllocatedAddresses(StateDeserializer& deserializer, map<uint32_t, std::map<T, AllocatedAddress> >& addresses) {
 	uint32_t networksCount = 0;
 	deserializer.deserialize(&networksCount);
+	for(unsigned networkIdx = 0; networkIdx < networksCount; ++networkIdx) {
+		uint32_t networkAddress = 0;
+		deserializer.deserialize(&networkAddress);
+	}
 }
 
 void AddressesAllocator::loadAddressesPools(StateDeserializer& deserializer) {
