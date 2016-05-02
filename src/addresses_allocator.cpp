@@ -1,5 +1,5 @@
 #include "../inc/addresses_allocator.h"
-#include <stdio.h>
+#include "../inc/state_serializer.h"
 
 using namespace std;
 
@@ -176,10 +176,24 @@ AllocatedAddress& AddressesAllocator::refreshLeaseTime(const Client& client) {
 }
 
 void AddressesAllocator::saveState() {
-	FILE* file = fopen(config.getCacheFile(), "wb");
+	StateSerializer serializer(config.getCacheFile());
 
-	fclose(file);
-		//std::unordered_map<uint32_t, AddressesPool*> addressesPools;
+	serializer.serialize(allocatedByHardware.size());
+	for(map<uint32_t, map<HardwareAddress, AllocatedAddress> >::const_iterator it = allocatedByHardware.begin(); it != allocatedByHardware.end(); it++) {
+		serializer.serialize(it->first);
+
+		const map<HardwareAddress, AllocatedAddress>& allocatedAddresses = it->second;
+		serializer.serialize(allocatedAddresses.size());
+
+		for(map<HardwareAddress, AllocatedAddress>::const_iterator it = allocatedAddresses.begin(); it != allocatedAddresses.end(); it++) {
+			serializer.serialize(it->first);
+			serializer.serialize(it->second);
+		}
+	}
+
+
 		//std::map<uint32_t, std::map<HardwareAddress, AllocatedAddress> > allocatedByHardware;
 		//std::map<uint32_t, std::map<ClientSpecialId, AllocatedAddress> > allocatedBySpecialId;
+		//std::unordered_map<uint32_t, AddressesPool*> addressesPools;
 }
+
