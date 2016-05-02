@@ -7,6 +7,7 @@
 #include "config.h"
 #include "addresses_pool.h"
 #include "state_serializer.h"
+#include "state_deserializer.h"
 #include "client.h"
 #include <stdint.h>
 #include <unordered_map>
@@ -48,6 +49,10 @@ class AddressesAllocator {
 
 		template <class T> void saveAllocatedAddresses(StateSerializer&, std::map<uint32_t, std::map<T, AllocatedAddress> >&);
 		void saveAddressesPools(StateSerializer&);
+		void tryToLoadCachedState();
+
+		template <class T> void loadAllocatedAddresses(StateDeserializer&, std::map<uint32_t, std::map<T, AllocatedAddress> >&);
+		void loadAddressesPools(StateDeserializer&);
 };
 
 #endif

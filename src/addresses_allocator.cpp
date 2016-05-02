@@ -11,6 +11,8 @@ AddressesAllocator::AddressesAllocator(Config& configToUse):config(configToUse) 
 
 		addressesPools[pool->getNetworkAddress()] = pool;
 	}
+
+	tryToLoadCachedState();
 }
 
 AddressesAllocator::~AddressesAllocator() {
@@ -190,4 +192,20 @@ void AddressesAllocator::saveAddressesPools(StateSerializer& serializer) {
 		serializer.serialize(it->first);
 		serializer.serialize(*it->second);
 	}
+}
+
+void AddressesAllocator::tryToLoadCachedState() {
+	StateDeserializer deserializer(config.getCacheFile());
+
+	loadAllocatedAddresses(deserializer, allocatedByHardware);
+	loadAllocatedAddresses(deserializer, allocatedBySpecialId);
+
+	loadAddressesPools(deserializer);
+}
+
+template <class T> void AddressesAllocator::loadAllocatedAddresses(StateDeserializer& deserializer, map<uint32_t, std::map<T, AllocatedAddress> >& addresses) {
+}
+
+void AddressesAllocator::loadAddressesPools(StateDeserializer& deserializer) {
+
 }
