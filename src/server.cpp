@@ -76,6 +76,7 @@ void Server::setPacketsFilter() {
 }
 
 Server::~Server() {
+	addressesAllocator.saveState();
 	pcap_close(pcapHandle); 
 	libnet_destroy(lnetHandle);
 	delete networkResolver;
