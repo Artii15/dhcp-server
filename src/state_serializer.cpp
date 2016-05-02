@@ -31,15 +31,16 @@ void StateSerializer::serialize(const list<uint32_t>& uint32List) {
 	}
 }
 
-void StateSerializer::serialize(const unsigned value) {
-	fwrite(&value, sizeof(value), 1, file);
-}
-
 void StateSerializer::serialize(const HardwareAddress& hardwareAddress) {
 	fwrite(&hardwareAddress.addressType, sizeof(uint8_t), 1, file);
 	fwrite(&hardwareAddress.hardwareAddress, sizeof(uint8_t), MAX_HADDR_SIZE, file);
 }
 
 void StateSerializer::serialize(const ClientSpecialId& specialId) {
+	fwrite(&specialId.type, sizeof(uint8_t), 1, file);
+	fwrite(&specialId.value, sizeof(uint8_t), CLIENT_SPECIAL_ID_MAX_LEN, file);
+}
 
+void StateSerializer::serialize(const uint32_t value) {
+	fwrite(&value, sizeof(value), 1, file);
 }

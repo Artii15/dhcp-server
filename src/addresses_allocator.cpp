@@ -166,7 +166,7 @@ void AddressesAllocator::saveState() {
 	saveAllocatedAddresses(serializer, allocatedByHardware);
 	saveAllocatedAddresses(serializer, allocatedBySpecialId);
 
-		//std::unordered_map<uint32_t, AddressesPool*> addressesPools;
+	saveAddressesPools(serializer);
 }
 
 template <class T> void AddressesAllocator::saveAllocatedAddresses(StateSerializer& serializer, map<uint32_t, map<T, AllocatedAddress> >& addresses) {
@@ -181,5 +181,12 @@ template <class T> void AddressesAllocator::saveAllocatedAddresses(StateSerializ
 			serializer.serialize(it->first);
 			serializer.serialize(it->second);
 		}
+	}
+}
+
+void AddressesAllocator::saveAddressesPools(StateSerializer& serializer) {
+	serializer.serialize(addressesPools.size());
+	for(unordered_map<uint32_t, AddressesPool*>::const_iterator it = addressesPools.begin(); it != addressesPools.end(); it++) {
+		serializer.serialize(it->first);
 	}
 }

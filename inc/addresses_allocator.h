@@ -47,6 +47,7 @@ class AddressesAllocator {
 		template <class T> void reuseOutdatedAddress(AddressesPool*, std::map<T, AllocatedAddress>&);
 
 		template <class T> void saveAllocatedAddresses(StateSerializer&, std::map<uint32_t, std::map<T, AllocatedAddress> >&);
+		void saveAddressesPools(StateSerializer&);
 };
 
 #endif

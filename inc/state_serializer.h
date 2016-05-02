@@ -16,7 +16,7 @@ class StateSerializer {
 		void serialize(const AllocatedAddress& allocatedAddress);
 		void serialize(const HardwareAddress& hardwareAddress);
 		void serialize(const ClientSpecialId&);
-		void serialize(const unsigned);
+		void serialize(const uint32_t);
 		void serialize(const std::list<uint32_t>&);
 	private:
 		FILE* file;		
