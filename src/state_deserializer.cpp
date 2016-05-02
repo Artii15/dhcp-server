@@ -20,6 +20,6 @@ StateDeserializer::~StateDeserializer() {
 	fclose(file);
 }
 
-void StateDeserializer::deserialize(uint32_t* target) {
-
+size_t StateDeserializer::deserialize(uint32_t* target) {
+	return fread(target, sizeof(uint32_t), 1, file);
 }
