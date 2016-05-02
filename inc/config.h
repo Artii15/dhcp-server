@@ -15,6 +15,7 @@ class Config {
 		uint32_t getNetworkAddress();
 		uint32_t getNetworkMask();
 		uint32_t getTransactionStorageTime();
+		const char* getCacheFile();
 		const std::list<PoolDescriptor>& getPoolsDescriptors();
 	
 	private:
@@ -22,6 +23,7 @@ class Config {
 		uint32_t networkAddress;
 		uint32_t networkMask;
 		uint32_t transactionStorageTime;
+		std::string cacheFile;
 		
 		std::list<PoolDescriptor> addressesPools;
 

@@ -1,4 +1,5 @@
 #include "../inc/addresses_allocator.h"
+#include <stdio.h>
 
 using namespace std;
 
@@ -172,4 +173,13 @@ AllocatedAddress& AddressesAllocator::refreshLeaseTime(const Client& client) {
 	allocatedAddress.allocationTime = time(NULL);
 
 	return allocatedAddress;
+}
+
+void AddressesAllocator::saveState() {
+	FILE* file = fopen(config.getCacheFile(), "wb");
+
+	fclose(file);
+		//std::unordered_map<uint32_t, AddressesPool*> addressesPools;
+		//std::map<uint32_t, std::map<HardwareAddress, AllocatedAddress> > allocatedByHardware;
+		//std::map<uint32_t, std::map<ClientSpecialId, AllocatedAddress> > allocatedBySpecialId;
 }

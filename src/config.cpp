@@ -41,6 +41,7 @@ void Config::load(const char* filePath) {
 	}
 
 	transactionStorageTime = config.get<uint32_t>("transactionStorageTime");
+	cacheFile = config.get<std::string>("cacheFile");
 }
 
 uint32_t Config::extractAddress(ptree &node, const char* key) {
@@ -81,4 +82,8 @@ const std::list<PoolDescriptor>& Config::getPoolsDescriptors() {
 
 uint32_t Config::getTransactionStorageTime() {
 	return transactionStorageTime;
+}
+
+const char* Config::getCacheFile() {
+	return cacheFile.c_str();
 }

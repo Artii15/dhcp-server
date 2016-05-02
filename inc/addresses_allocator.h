@@ -23,6 +23,7 @@ class AddressesAllocator {
 		AllocatedAddress& getAllocatedAddress(const Client& client);
 		void softDelete(const Client& client);
 		AllocatedAddress& refreshLeaseTime(const Client& client);
+		void saveState();
 
 	private:
 		Config& config;

@@ -12,5 +12,6 @@
 			"routers": ["192.168.1.1"]
 		}
 	],
-	"transactionStorageTime": 300
+	"transactionStorageTime": 300,
+	"cacheFile": ".cache"
 }
