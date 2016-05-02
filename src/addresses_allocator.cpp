@@ -217,10 +217,13 @@ template <class T> void AddressesAllocator::loadAllocatedAddresses(StateDeserial
 		deserializer.deserialize(&numberOfAddressesInNetwork);
 
 		for(unsigned addressIdx = 0; addressIdx < numberOfAddressesInNetwork; ++addressIdx) {
-			//T clientId;
-			//AllocatedAddress allocatedAddress;
+			T clientId;
+			AllocatedAddress allocatedAddress;
 
+			deserializer.deserialize(&clientId);
+			deserializer.deserialize(&allocatedAddress);
 
+			addressesInNetwork[clientId] = allocatedAddress;
 		}
 	}
 }

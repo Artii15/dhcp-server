@@ -17,9 +17,9 @@ class StateDeserializer {
 
 		static bool cacheExists(const char* filePath);
 
-		void deserialize(const AllocatedAddress& allocatedAddress);
-		void deserialize(const HardwareAddress& hardwareAddress);
-		void deserialize(const ClientSpecialId&);
+		void deserialize(AllocatedAddress* allocatedAddress);
+		void deserialize(HardwareAddress* hardwareAddress);
+		void deserialize(ClientSpecialId*);
 		size_t deserialize(uint32_t*);
 		void deserialize(const std::list<uint32_t>&);
 		void deserialize(const std::unordered_set<uint32_t>&);

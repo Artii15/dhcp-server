@@ -23,3 +23,15 @@ StateDeserializer::~StateDeserializer() {
 size_t StateDeserializer::deserialize(uint32_t* target) {
 	return fread(target, sizeof(uint32_t), 1, file);
 }
+
+void StateDeserializer::deserialize(AllocatedAddress* allocatedAddress) {
+
+}
+
+void StateDeserializer::deserialize(HardwareAddress* hardwareAddress) {
+
+}
+
+void StateDeserializer::deserialize(ClientSpecialId*) {
+
+}
