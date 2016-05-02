@@ -13,9 +13,9 @@ void finish(int signum) {
 int main(int argc, char** argv) {
 	signal(SIGINT, finish);
 
-	Config config("config.json");
-	TransactionsStorage storage(config);
-	AddressesAllocator allocator(config);
+	static Config config("config.json");
+	static TransactionsStorage storage(config);
+	static AddressesAllocator allocator(config);
 	static Server server(config, allocator, storage);
 
 	server.listen();
