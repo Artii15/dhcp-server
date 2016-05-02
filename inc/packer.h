@@ -10,7 +10,7 @@ class Packer {
 
 		Packer& pack(uint8_t optionType, uint32_t value);
 		Packer& pack(uint8_t optionType, uint8_t value);
-		Packer& pack(uint8_t optionType, const std::list<uint32_t>* value);
+		Packer& pack(uint8_t optionType, const std::list<uint32_t>& value);
 		Packer& pack(uint8_t optionType);
 
 	private:

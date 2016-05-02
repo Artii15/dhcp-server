@@ -19,8 +19,8 @@ void StateSerializer::serialize(const AllocatedAddress& address) {
 	fwrite(&address.allocationTime, sizeof(address.allocationTime), 1, file);
 	fwrite(&address.allocationTime, sizeof(address.allocationTime), 1, file);
 	
-	serialize(*address.dnsServers);
-	serialize(*address.routers);
+	serialize(address.dnsServers);
+	serialize(address.routers);
 }
 
 void StateSerializer::serialize(const list<uint32_t>& uint32List) {

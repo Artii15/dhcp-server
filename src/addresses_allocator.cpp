@@ -77,8 +77,8 @@ void AddressesAllocator::fillAddress(uint32_t networkAddress, uint32_t ip, Alloc
 	const PoolDescriptor& poolDescriptor = addressesPools[networkAddress]->descriptor;
 	allocatedAddress.ipAddress = ip;
 	allocatedAddress.mask = poolDescriptor.networkMask;
-	allocatedAddress.dnsServers = &poolDescriptor.dnsServers;
-	allocatedAddress.routers = &poolDescriptor.routers;
+	allocatedAddress.dnsServers = poolDescriptor.dnsServers;
+	allocatedAddress.routers = poolDescriptor.routers;
 	allocatedAddress.leaseTime = poolDescriptor.leaseTime;
 	allocatedAddress.allocationTime = time(NULL);
 }
@@ -205,12 +205,23 @@ void AddressesAllocator::tryToLoadCachedState() {
 	}
 }
 
-template <class T> void AddressesAllocator::loadAllocatedAddresses(StateDeserializer& deserializer, map<uint32_t, std::map<T, AllocatedAddress> >& addresses) {
+template <class T> void AddressesAllocator::loadAllocatedAddresses(StateDeserializer& deserializer, map<uint32_t, map<T, AllocatedAddress> >& addresses) {
 	uint32_t networksCount = 0;
 	deserializer.deserialize(&networksCount);
 	for(unsigned networkIdx = 0; networkIdx < networksCount; ++networkIdx) {
 		uint32_t networkAddress = 0;
 		deserializer.deserialize(&networkAddress);
+
+		map<T, AllocatedAddress>& addressesInNetwork = addresses[networkAddress];
+		uint32_t numberOfAddressesInNetwork = 0;
+		deserializer.deserialize(&numberOfAddressesInNetwork);
+
+		for(unsigned addressIdx = 0; addressIdx < numberOfAddressesInNetwork; ++addressIdx) {
+			//T clientId;
+			//AllocatedAddress allocatedAddress;
+
+
+		}
 	}
 }
 
