@@ -18,6 +18,7 @@ void finish(int signum) {
 int main(int argc, char** argv) {
 	signal(SIGINT, finish);
 
+	/* Static objects will be auto cleaned after calling exit() */
 	static Config config("config.json");
 	static TransactionsStorage storage(config);
 	static AddressesAllocator allocator(config);
