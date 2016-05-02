@@ -19,7 +19,7 @@ class StateDeserializer {
 
 		void deserialize(AllocatedAddress* allocatedAddress);
 		size_t deserialize(HardwareAddress* hardwareAddress);
-		void deserialize(ClientSpecialId*);
+		size_t deserialize(ClientSpecialId*);
 		size_t deserialize(uint32_t*);
 		size_t deserialize(long int*);
 		size_t deserialize(std::list<uint32_t>*);

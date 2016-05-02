@@ -58,6 +58,7 @@ size_t StateDeserializer::deserialize(HardwareAddress* hardwareAddress) {
 		+ fread(hardwareAddress->hardwareAddress, sizeof(uint8_t), MAX_HADDR_SIZE, file);
 }
 
-void StateDeserializer::deserialize(ClientSpecialId*) {
-
+size_t StateDeserializer::deserialize(ClientSpecialId* clientId) {
+	return fread(&clientId->type, sizeof(uint8_t), 1, file)
+		+ fread(clientId->value, sizeof(uint8_t), CLIENT_SPECIAL_ID_MAX_LEN, file);
 }
