@@ -20,14 +20,13 @@ StateDeserializer::~StateDeserializer() {
 	fclose(file);
 }
 
-void StateDeserializer::deserialize(AllocatedAddress* address) {
-	deserialize(&address->ipAddress);
-	deserialize(&address->mask);
-	deserialize(&address->leaseTime);
-	deserialize(&address->allocationTime);
-	
-	deserialize(&address->dnsServers);
-	deserialize(&address->routers);
+size_t StateDeserializer::deserialize(AllocatedAddress* address) {
+	return deserialize(&address->ipAddress)
+		+ deserialize(&address->mask)
+		+ deserialize(&address->leaseTime)
+		+ deserialize(&address->allocationTime)
+		+ deserialize(&address->dnsServers)
+		+ deserialize(&address->routers);
 }
 
 size_t StateDeserializer::deserialize(list<uint32_t>* uint32List) {
