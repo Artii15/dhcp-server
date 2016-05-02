@@ -15,10 +15,12 @@ class StateDeserializer {
 		StateDeserializer(const char* filePath);
 		~StateDeserializer();
 
+		static bool cacheExists(const char* filePath);
+
 		void deserialize(const AllocatedAddress& allocatedAddress);
 		void deserialize(const HardwareAddress& hardwareAddress);
 		void deserialize(const ClientSpecialId&);
-		void deserialize(const uint32_t);
+		void deserialize(uint32_t*);
 		void deserialize(const std::list<uint32_t>&);
 		void deserialize(const std::unordered_set<uint32_t>&);
 		void deserialize(const AddressesPool&);

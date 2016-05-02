@@ -195,15 +195,19 @@ void AddressesAllocator::saveAddressesPools(StateSerializer& serializer) {
 }
 
 void AddressesAllocator::tryToLoadCachedState() {
-	StateDeserializer deserializer(config.getCacheFile());
+	if(StateDeserializer::cacheExists(config.getCacheFile())) {
+		StateDeserializer deserializer(config.getCacheFile());
 
-	loadAllocatedAddresses(deserializer, allocatedByHardware);
-	loadAllocatedAddresses(deserializer, allocatedBySpecialId);
+		loadAllocatedAddresses(deserializer, allocatedByHardware);
+		loadAllocatedAddresses(deserializer, allocatedBySpecialId);
 
-	loadAddressesPools(deserializer);
+		loadAddressesPools(deserializer);
+	}
 }
 
 template <class T> void AddressesAllocator::loadAllocatedAddresses(StateDeserializer& deserializer, map<uint32_t, std::map<T, AllocatedAddress> >& addresses) {
+	uint32_t networksCount = 0;
+	deserializer.deserialize(&networksCount);
 }
 
 void AddressesAllocator::loadAddressesPools(StateDeserializer& deserializer) {
