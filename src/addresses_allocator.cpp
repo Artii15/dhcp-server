@@ -188,5 +188,6 @@ void AddressesAllocator::saveAddressesPools(StateSerializer& serializer) {
 	serializer.serialize(addressesPools.size());
 	for(unordered_map<uint32_t, AddressesPool*>::const_iterator it = addressesPools.begin(); it != addressesPools.end(); it++) {
 		serializer.serialize(it->first);
+		serializer.serialize(*it->second);
 	}
 }

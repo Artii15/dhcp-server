@@ -5,7 +5,10 @@
 #include <unordered_set>
 #include "pool_descriptor.h"
 
+class StateSerializer;
+
 class AddressesPool {
+	friend class StateSerializer;
 	public:
 		AddressesPool(const PoolDescriptor&);
 

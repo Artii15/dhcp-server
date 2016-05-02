@@ -44,3 +44,18 @@ void StateSerializer::serialize(const ClientSpecialId& specialId) {
 void StateSerializer::serialize(const uint32_t value) {
 	fwrite(&value, sizeof(value), 1, file);
 }
+
+void StateSerializer::serialize(const AddressesPool& pool) {
+	fwrite(&pool.networkAddress, sizeof(pool.networkAddress), 1, file);
+	fwrite(&pool.nextToAssign, sizeof(pool.nextToAssign), 1, file);
+
+	serialize(pool.addressesInUse);
+	serialize(pool.abandonedAddresses);
+}
+
+void StateSerializer::serialize(const std::unordered_set<uint32_t>& uint32Set) {
+	serialize(uint32Set.size());
+	for(unordered_set<uint32_t>::const_iterator it = uint32Set.begin(); it != uint32Set.end(); it++) {
+		fwrite(&*it, sizeof(uint32_t), 1, file);
+	}
+}

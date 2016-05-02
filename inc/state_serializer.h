@@ -4,9 +4,11 @@
 #include "../inc/allocated_address.h"
 #include "../inc/hardware_address.h"
 #include "../inc/client_special_id.h"
+#include "../inc/addresses_pool.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <list>
+#include <unordered_set>
 
 class StateSerializer {
 	public:
@@ -18,6 +20,8 @@ class StateSerializer {
 		void serialize(const ClientSpecialId&);
 		void serialize(const uint32_t);
 		void serialize(const std::list<uint32_t>&);
+		void serialize(const std::unordered_set<uint32_t>&);
+		void serialize(const AddressesPool&);
 	private:
 		FILE* file;		
 };
