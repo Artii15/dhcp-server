@@ -77,6 +77,7 @@ bool RequestHandler::isRequestedAddressValid(DHCPMessage& request, Options& opti
 
 void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options& options) {
 	if(allocator.hasClientAllocatedAddress(client)) {
+		printf("address for client\n");
 		const AllocatedAddress& allocatedAddress = allocator.getAllocatedAddress(client);
 		if(allocatedAddress.ipAddress == *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value)) {
 			respond(request, allocatedAddress, DHCPACK);
@@ -86,6 +87,9 @@ void RequestHandler::handleInitRebootState(struct DHCPMessage& request, Options&
 			invalidAddress.ipAddress = *((uint32_t*)options.get(REQUESTED_IP_ADDRESS).value);
 			respond(request, invalidAddress, DHCPNAK);
 		}
+	}
+	else {
+		printf("No address for client\n");
 	}
 }
 

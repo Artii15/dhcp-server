@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
+#include "bytes_comparator.h"
 
 #define CLIENT_SPECIAL_ID_MAX_LEN 255
 
@@ -17,16 +19,8 @@ struct ClientSpecialId {
 		memcpy(this->value, value, CLIENT_SPECIAL_ID_MAX_LEN);
 	}
 
-	inline bool operator == (const ClientSpecialId &id) const {
-        return (type == id.type && (memcmp(value, id.value, CLIENT_SPECIAL_ID_MAX_LEN) == 0));
-    }
-
-	inline bool operator > (const ClientSpecialId &id) const {
-        return (type > id.type) || ((type == id.type) && (memcmp(value, id.value, CLIENT_SPECIAL_ID_MAX_LEN) > 0));
-    }
-
 	inline bool operator < (const ClientSpecialId &id) const {
-        return (type < id.type) || ((type == id.type) && (memcmp(value, id.value, CLIENT_SPECIAL_ID_MAX_LEN) < 0));
+        return (type < id.type) || ((type == id.type) && BytesComparator::compareArrays(value, id.value, CLIENT_SPECIAL_ID_MAX_LEN));
     }
 };
 
