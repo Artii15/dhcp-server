@@ -13,10 +13,10 @@ StateSerializer::~StateSerializer() {
 }
 
 void StateSerializer::serialize(const AllocatedAddress& address) {
-	fwrite(&address.ipAddress, sizeof(address.ipAddress), 1, file);
-	fwrite(&address.mask, sizeof(address.mask), 1, file);
-	fwrite(&address.leaseTime, sizeof(address.leaseTime), 1, file);
-	fwrite(&address.allocationTime, sizeof(address.allocationTime), 1, file);
+	serialize(address.ipAddress);
+	serialize(address.mask);
+	serialize(address.leaseTime);
+	serialize(address.allocationTime);
 	
 	serialize(address.dnsServers);
 	serialize(address.routers);
