@@ -17,7 +17,6 @@ void StateSerializer::serialize(const AllocatedAddress& address) {
 	fwrite(&address.mask, sizeof(address.mask), 1, file);
 	fwrite(&address.leaseTime, sizeof(address.leaseTime), 1, file);
 	fwrite(&address.allocationTime, sizeof(address.allocationTime), 1, file);
-	fwrite(&address.allocationTime, sizeof(address.allocationTime), 1, file);
 	
 	serialize(address.dnsServers);
 	serialize(address.routers);
