@@ -76,7 +76,6 @@ void Server::setPacketsFilter() {
 }
 
 Server::~Server() {
-	addressesAllocator.saveState();
 	pcap_close(pcapHandle); 
 	libnet_destroy(lnetHandle);
 	delete networkResolver;
@@ -141,4 +140,8 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 			break;	
 		};
 	}
+}
+
+void Server::save() {
+	addressesAllocator.saveState();
 }

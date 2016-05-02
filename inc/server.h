@@ -17,6 +17,7 @@ class Server {
 		~Server();
 
 		void listen();
+		void save();
 
 		uint32_t serverIp;
 		libnet_t* lnetHandle;
