@@ -18,7 +18,7 @@ class StateDeserializer {
 		static bool cacheExists(const char* filePath);
 
 		void deserialize(AllocatedAddress* allocatedAddress);
-		void deserialize(HardwareAddress* hardwareAddress);
+		size_t deserialize(HardwareAddress* hardwareAddress);
 		void deserialize(ClientSpecialId*);
 		size_t deserialize(uint32_t*);
 		size_t deserialize(long int*);
