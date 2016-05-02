@@ -19,6 +19,7 @@ class StateSerializer {
 		void serialize(const HardwareAddress& hardwareAddress);
 		void serialize(const ClientSpecialId&);
 		void serialize(const uint32_t);
+		void serializeTime(const time_t); // Needs to have different name, some compilers would not distinguish between time_t and uint32_t
 		void serialize(const std::list<uint32_t>&);
 		void serialize(const std::unordered_set<uint32_t>&);
 		void serialize(const AddressesPool&);

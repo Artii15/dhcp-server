@@ -16,7 +16,7 @@ void StateSerializer::serialize(const AllocatedAddress& address) {
 	serialize(address.ipAddress);
 	serialize(address.mask);
 	serialize(address.leaseTime);
-	serialize(address.allocationTime);
+	serializeTime(address.allocationTime);
 	
 	serialize(address.dnsServers);
 	serialize(address.routers);
@@ -41,6 +41,10 @@ void StateSerializer::serialize(const ClientSpecialId& specialId) {
 }
 
 void StateSerializer::serialize(const uint32_t value) {
+	fwrite(&value, sizeof(value), 1, file);
+}
+
+void StateSerializer::serializeTime(const time_t value) {
 	fwrite(&value, sizeof(value), 1, file);
 }
 

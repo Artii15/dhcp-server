@@ -21,7 +21,7 @@ class StateDeserializer {
 		size_t deserialize(HardwareAddress* hardwareAddress);
 		size_t deserialize(ClientSpecialId*);
 		size_t deserialize(uint32_t*);
-		size_t deserialize(long int*);
+		size_t deserialize(time_t*);
 		size_t deserialize(std::list<uint32_t>*);
 		size_t deserialize(std::unordered_set<uint32_t>*);
 		size_t deserialize(AddressesPool*);

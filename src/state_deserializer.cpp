@@ -47,8 +47,8 @@ size_t StateDeserializer::deserialize(uint32_t* target) {
 	return fread(target, sizeof(uint32_t), 1, file);
 }
 
-size_t StateDeserializer::deserialize(long int* target) {
-	return fread(target, sizeof(long int), 1, file);
+size_t StateDeserializer::deserialize(time_t* target) {
+	return fread(target, sizeof(time_t), 1, file);
 }
 
 
