@@ -6,6 +6,7 @@
 #include "allocated_address.h"
 #include "config.h"
 #include "addresses_pool.h"
+#include "state_serializer.h"
 #include "client.h"
 #include <stdint.h>
 #include <unordered_map>
@@ -43,6 +44,8 @@ class AddressesAllocator {
 
 		uint32_t findNextAddr(uint32_t network);
 		uint32_t reuseOutdatedAddress(uint32_t network);
+
+		template <class T> void saveAllocatedAddresses(StateSerializer&, std::map<uint32_t, std::map<T, AllocatedAddress> >&);
 };
 
 #endif
