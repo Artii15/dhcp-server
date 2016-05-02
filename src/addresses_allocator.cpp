@@ -40,35 +40,21 @@ uint32_t AddressesAllocator::findNextAddr(uint32_t network) {
 }
 
 uint32_t AddressesAllocator::reuseOutdatedAddress(uint32_t network) {
-	uint32_t candidateAddress = 0;
+	AddressesPool* pool = addressesPools[network];
+	reuseOutdatedAddress(pool, allocatedByHardware[network]);
+	reuseOutdatedAddress(pool, allocatedBySpecialId[network]);
 
-	AddressesPool* correspondingPool = addressesPools[network];
+	return pool->getNext();
+}
 
-	map<HardwareAddress, AllocatedAddress>& inNetworkByHardware = allocatedByHardware[network];
-	for(map<HardwareAddress, AllocatedAddress>::const_iterator it = inNetworkByHardware.begin()
-		; it != inNetworkByHardware.end()
-		; ++it) {
+template <class T> void AddressesAllocator::reuseOutdatedAddress(AddressesPool* pool, std::map<T, AllocatedAddress>& addresses) {
+	for(typename map<T, AllocatedAddress>::const_iterator it = addresses.begin(); it != addresses.end(); it++) {
 		const AllocatedAddress& allocatedAddress = it->second;
 		if(time(NULL) - allocatedAddress.allocationTime > allocatedAddress.leaseTime) {
-			candidateAddress = allocatedAddress.ipAddress;
-			correspondingPool->abandon(candidateAddress);
-			inNetworkByHardware.erase(it);
+			pool->abandon(allocatedAddress.ipAddress);
+			addresses.erase(it);
 		}
 	}
-
-	map<ClientSpecialId, AllocatedAddress>& inNetworkById = allocatedBySpecialId[network];
-	for(map<ClientSpecialId, AllocatedAddress>::const_iterator it = inNetworkById.begin()
-		; it != inNetworkById.end()
-		; ++it) {
-		const AllocatedAddress& allocatedAddress = it->second;
-		if(time(NULL) - allocatedAddress.allocationTime > allocatedAddress.leaseTime) {
-			candidateAddress = allocatedAddress.ipAddress;
-			correspondingPool->abandon(candidateAddress);
-			inNetworkById.erase(it);
-		}
-	}
-
-	return correspondingPool->getNext();
 }
 
 AllocatedAddress& AddressesAllocator::allocate(const uint32_t networkAddress, const HardwareAddress& hardwareAddress, const uint32_t ip) {
@@ -180,8 +166,6 @@ void AddressesAllocator::saveState() {
 	saveAllocatedAddresses(serializer, allocatedByHardware);
 	saveAllocatedAddresses(serializer, allocatedBySpecialId);
 
-		//std::map<uint32_t, std::map<HardwareAddress, AllocatedAddress> > allocatedByHardware;
-		//std::map<uint32_t, std::map<ClientSpecialId, AllocatedAddress> > allocatedBySpecialId;
 		//std::unordered_map<uint32_t, AddressesPool*> addressesPools;
 }
 

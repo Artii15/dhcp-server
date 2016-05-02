@@ -44,6 +44,7 @@ class AddressesAllocator {
 
 		uint32_t findNextAddr(uint32_t network);
 		uint32_t reuseOutdatedAddress(uint32_t network);
+		template <class T> void reuseOutdatedAddress(AddressesPool*, std::map<T, AllocatedAddress>&);
 
 		template <class T> void saveAllocatedAddresses(StateSerializer&, std::map<uint32_t, std::map<T, AllocatedAddress> >&);
 };
