@@ -61,3 +61,25 @@ size_t StateDeserializer::deserialize(ClientSpecialId* clientId) {
 	return fread(&clientId->type, sizeof(uint8_t), 1, file)
 		+ fread(clientId->value, sizeof(uint8_t), CLIENT_SPECIAL_ID_MAX_LEN, file);
 }
+
+size_t StateDeserializer::deserialize(AddressesPool* pool) {
+	return fread(&pool->networkAddress, sizeof(pool->networkAddress), 1, file)
+		+ fread(&pool->nextToAssign, sizeof(pool->nextToAssign), 1, file)
+		+ deserialize(&pool->addressesInUse)
+		+ deserialize(&pool->abandonedAddresses);
+}
+
+size_t StateDeserializer::deserialize(unordered_set<uint32_t>* uint32Set) {
+	uint32_t setSize = 0;
+	deserialize(&setSize);
+
+	size_t elementsSizeInBytes = 0;
+
+	for(unsigned i = 0; i < setSize; ++i) {
+		uint32_t element = 0;
+		elementsSizeInBytes += fread(&element, sizeof(element), 1, file);
+		uint32Set->insert(element);
+	}
+
+	return elementsSizeInBytes;
+}

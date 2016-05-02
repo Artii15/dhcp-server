@@ -229,5 +229,12 @@ template <class T> void AddressesAllocator::loadAllocatedAddresses(StateDeserial
 }
 
 void AddressesAllocator::loadAddressesPools(StateDeserializer& deserializer) {
+	uint32_t numberOfPools = 0;
+	deserializer.deserialize(&numberOfPools);
 
+	for(unsigned i = 0; i < numberOfPools; ++i) {
+		uint32_t network = 0;
+		deserializer.deserialize(&network);
+		deserializer.deserialize(addressesPools[network]);
+	}
 }

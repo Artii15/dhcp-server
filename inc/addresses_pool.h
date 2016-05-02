@@ -6,9 +6,11 @@
 #include "pool_descriptor.h"
 
 class StateSerializer;
+class StateDeserializer;
 
 class AddressesPool {
 	friend class StateSerializer;
+	friend class StateDeserializer;
 	public:
 		AddressesPool(const PoolDescriptor&);
 

@@ -23,8 +23,8 @@ class StateDeserializer {
 		size_t deserialize(uint32_t*);
 		size_t deserialize(long int*);
 		size_t deserialize(std::list<uint32_t>*);
-		void deserialize(const std::unordered_set<uint32_t>&);
-		void deserialize(const AddressesPool&);
+		size_t deserialize(std::unordered_set<uint32_t>*);
+		size_t deserialize(AddressesPool*);
 	private:
 		FILE* file;		
 };
