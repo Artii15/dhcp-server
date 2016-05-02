@@ -30,6 +30,20 @@ void StateDeserializer::deserialize(AllocatedAddress* address) {
 	//deserialize(address->routers);
 }
 
+size_t StateDeserializer::deserialize(list<uint32_t>* uint32List) {
+	uint32_t listSize = 0;
+	deserialize(&listSize);
+
+	size_t bytesReaded = 0;
+	for(unsigned i = 0; i < listSize; ++i) {
+		uint32_t element;
+		bytesReaded += fread(&element, sizeof(uint32_t), 1, file);
+		uint32List->push_back(element);
+	}
+
+	return bytesReaded;
+}
+
 size_t StateDeserializer::deserialize(uint32_t* target) {
 	return fread(target, sizeof(uint32_t), 1, file);
 }
