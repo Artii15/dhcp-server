@@ -23,13 +23,9 @@ uint32_t AddressesPool::calculateNetworkAddress(uint32_t address, uint32_t mask)
 
 uint32_t AddressesPool::getNext() {
 	uint32_t address = findAbandonedAddress();
-	if(address == 0) {
-		return generateFreshAddress();
-	}
-	else {
-		abandonedAddresses.erase(address);
-		return address;
-	}
+	abandonedAddresses.erase(address);
+
+	return address ? address : generateFreshAddress();
 }
 
 uint32_t AddressesPool::generateFreshAddress() {
