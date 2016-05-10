@@ -103,7 +103,9 @@ void Server::dispatch(u_char *srv, const struct pcap_pkthdr *header, const u_cha
 	if(options.exists(CLIENT_IDENTIFIER)) {
 		Option& clientIdOption = options.get(CLIENT_IDENTIFIER);
 		client.specialId.type = *clientIdOption.value;
-		memcpy(client.specialId.value, clientIdOption.value + 1, (CLIENT_SPECIAL_ID_MAX_LEN < clientIdOption.length) ? CLIENT_SPECIAL_ID_MAX_LEN : clientIdOption.length);
+
+		unsigned clientIdLen = clientIdOption.length - 1;
+		memcpy(client.specialId.value, clientIdOption.value + 1, (CLIENT_SPECIAL_ID_MAX_LEN < clientIdLen) ? CLIENT_SPECIAL_ID_MAX_LEN : clientIdLen);
 
 		client.identificationMethod = BASED_ON_SPECIAL_ID;
 	}
