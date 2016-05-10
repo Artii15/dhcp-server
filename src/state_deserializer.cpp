@@ -65,7 +65,6 @@ size_t StateDeserializer::deserialize(ClientSpecialId* clientId) {
 size_t StateDeserializer::deserialize(AddressesPool* pool) {
 	return fread(&pool->networkAddress, sizeof(pool->networkAddress), 1, file)
 		+ fread(&pool->nextToAssign, sizeof(pool->nextToAssign), 1, file)
-		+ deserialize(&pool->addressesInUse)
 		+ deserialize(&pool->abandonedAddresses);
 }
 

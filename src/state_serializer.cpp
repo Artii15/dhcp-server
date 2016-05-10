@@ -52,7 +52,6 @@ void StateSerializer::serialize(const AddressesPool& pool) {
 	fwrite(&pool.networkAddress, sizeof(pool.networkAddress), 1, file);
 	fwrite(&pool.nextToAssign, sizeof(pool.nextToAssign), 1, file);
 
-	serialize(pool.addressesInUse);
 	serialize(pool.abandonedAddresses);
 }
 

@@ -23,8 +23,13 @@ uint32_t AddressesPool::calculateNetworkAddress(uint32_t address, uint32_t mask)
 
 uint32_t AddressesPool::getNext() {
 	uint32_t address = findAbandonedAddress();
-
-	return address ? address : generateFreshAddress();
+	if(address == 0) {
+		return generateFreshAddress();
+	}
+	else {
+		abandonedAddresses.erase(address);
+		return address;
+	}
 }
 
 uint32_t AddressesPool::generateFreshAddress() {
@@ -39,7 +44,6 @@ uint32_t AddressesPool::findAbandonedAddress() {
 }
 
 void AddressesPool::abandon(uint32_t address) {
-	addressesInUse.erase(address);
 	abandonedAddresses.insert(address);
 }
 

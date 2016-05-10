@@ -26,7 +26,6 @@ class AddressesPool {
 		uint32_t networkAddress;
 		uint32_t nextToAssign;
 
-		std::unordered_set<uint32_t> addressesInUse;
 		std::unordered_set<uint32_t> abandonedAddresses;
 
 		uint32_t findAbandonedAddress();
