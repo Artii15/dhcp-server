@@ -7,7 +7,7 @@ DiscoverHandler::DiscoverHandler(TransactionsStorage& storage, Client& clientToH
 
 void DiscoverHandler::handle(struct DHCPMessage& message, Options& options, uint32_t dstAddr) {
 	if(!transactionsStorage.transactionExists(message.xid)) {
-		AllocatedAddress& address = allocator.allocateAddressFor(client);
+		AllocatedAddress& address = allocator.hasClientAllocatedAddress(client) ? allocator.refreshLeaseTime(client) : allocator.allocateAddressFor(client);
 
 		transactionsStorage.createTransaction(message.xid, &address);
 		sendOffer(message, address);
