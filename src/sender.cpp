@@ -14,7 +14,8 @@ Sender::Sender(libnet_t* lnetHandle) {
 
 void Sender::send(DHCPMessage& response, unsigned messageType) {
 	uint32_t targetIpAddress = 0;
-	uint8_t targetHardwareAddress[BROADCAST_ADDR_LEN] = {0};
+	uint8_t targetHardwareAddress[BROADCAST_ADDR_LEN];
+	fillBroadcastAddress(targetHardwareAddress);
 
 	if(response.giaddr != 0) {
 		targetIpAddress = response.giaddr;
@@ -24,14 +25,12 @@ void Sender::send(DHCPMessage& response, unsigned messageType) {
 	}
 	else if(messageType == DHCPNAK) {
 		targetIpAddress = IP_BROADCAST_ADDR;
-		fillBroadcastAddress(targetHardwareAddress);
 	}
 	else if(response.giaddr == 0 && response.ciaddr != 0) {
 		targetIpAddress = response.ciaddr;
 	}
 	else if(response.flags & BROADCAST_FLAG) {
 		targetIpAddress = IP_BROADCAST_ADDR;
-		fillBroadcastAddress(targetHardwareAddress);
 	}
 	else {
 		targetIpAddress = response.yiaddr;
@@ -46,10 +45,7 @@ void Sender::send(DHCPMessage& response, unsigned messageType) {
 
 	libnet_autobuild_ipv4(LIBNET_IPV4_H + LIBNET_UDP_H + sizeof(response), IPPROTO_UDP, htonl(targetIpAddress), lnetHandle);
 
-	uint8_t zeroAddr[BROADCAST_ADDR_LEN] = {0};
-	if(memcmp(zeroAddr, targetHardwareAddress, BROADCAST_ADDR_LEN) != 0) {
-		libnet_autobuild_ethernet(targetHardwareAddress, ETH_P_IP, lnetHandle);
-	}
+	libnet_autobuild_ethernet(targetHardwareAddress, ETH_P_IP, lnetHandle);
 
 	libnet_write(lnetHandle);
 	libnet_clear_packet(lnetHandle);
